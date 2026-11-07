@@ -1,0 +1,213 @@
+/* The sky stays fixed behind the page; the sections above it are see-through. */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: #8cc4e8;
+}
+
+.sky-photo {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 170vh;
+  background: url('/jet/sky-hero.webp') center top / cover no-repeat;
+  transform-origin: 50% 25%;
+}
+
+/* A wide, see-through strip of cloud that loops sideways. */
+.cloud-layer {
+  --h: 88vh;
+  position: absolute;
+  top: var(--top, 0);
+  left: 0;
+  width: 100%;
+  height: var(--h);
+  overflow: hidden;
+  transform-origin: 50% 40%;
+}
+
+/* The strip's own edges are cut straight, so they fade out here. */
+.cloud-layer:nth-child(2) { mask-image: linear-gradient(#000 65%, transparent); }
+.cloud-layer:nth-child(3) { --h: 120vh; --top: 30%; opacity: 0; }
+.cloud-layer:nth-child(4) { --h: 170vh; --top: 40%; opacity: 0; }
+.cloud-layer:nth-child(n + 3) { mask-image: linear-gradient(transparent, #000 30%, #000 65%, transparent); }
+
+.cloud-drift {
+  --tile: calc(var(--h) * 140 / 19);
+  width: calc(var(--tile) * 2);
+  height: 100%;
+  background: url('/jet/clouds.webp') left top / var(--tile) 100% repeat-x;
+  animation: cloud-drift var(--speed, 150s) linear infinite;
+}
+
+.cloud-layer:nth-child(3) .cloud-drift { --speed: 110s; }
+.cloud-layer:nth-child(4) .cloud-drift { --speed: 75s; }
+
+@keyframes cloud-drift {
+  to {
+    transform: translateX(calc(var(--tile) * -1));
+  }
+}
+
+.cabin-run {
+  height: 280vh;
+}
+
+.cabin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.jet-stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Every layer shares this 2:1 box, wider than the screen so the wall runs off its edges. */
+.jet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(130vw, 260vh);
+  aspect-ratio: 2;
+  margin-left: calc(max(130vw, 260vh) / -2);
+  margin-top: calc(max(130vw, 260vh) / -4);
+}
+
+.jet > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.jet-window {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jet-window-c {
+  position: relative;
+  width: 18.96%;
+  aspect-ratio: 1 / 1.38;
+  margin-bottom: 1%;
+  margin-left: 0.4%;
+}
+
+.jet-lift {
+  position: absolute;
+  inset: 0;
+}
+
+.jet-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0.35) 100%),
+    #dbdbdb;
+}
+
+.jet-knob {
+  position: absolute;
+  inset: auto 0 -12px;
+  z-index: 1;
+  width: 100%;
+}
+
+.jet-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #0000 25%, #0006);
+}
+
+/* Either side of the window, like the headlines on the reference site. */
+.cabin-copy {
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  font-size: clamp(30px, 3.6vw, 64px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.cabin-copy p {
+  position: absolute;
+  width: 25vw;
+}
+
+.cruising-left {
+  top: 24%;
+  left: 5vw;
+}
+
+.cruising-right {
+  right: 5vw;
+  bottom: 18%;
+  text-align: right;
+}
+
+/* The card stays on screen from its white page down to the end of the timeline. */
+.card-run {
+  position: relative;
+}
+
+.badge-rail {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.badge {
+  position: sticky;
+  inset: auto;
+  top: 0;
+  height: 100vh;
+  pointer-events: auto;
+}
+
+.badge canvas {
+  transition: transform 1s cubic-bezier(0.2, 1.25, 0.4, 1), opacity 0.25s;
+}
+
+.badge:not(.is-in) canvas {
+  opacity: 0;
+  transform: translateY(-70%);
+}
+
+/* Clouds climb over the page until only white is left. */
+.sky-fade {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.cloud-bank {
+  position: absolute;
+  inset: 0;
+  background: url('/jet/clouds.webp') left bottom / auto 90% repeat-x;
+  mask-image: linear-gradient(transparent 10%, #000 45%); /* the strip's top edge is at 10% */
+}
+
+.sky-fade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 25%, #fff 88%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud-drift {
+    animation: none;
+  }
+}

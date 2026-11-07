@@ -1,0 +1,213 @@
+.events {
+  --ink: #111114;
+  --soft: rgba(17, 17, 20, 0.72);
+  position: relative;
+  color: var(--ink);
+  background: #fff;
+}
+
+.events-head {
+  padding: clamp(96px, 16vh, 160px) var(--edge) 0 calc(var(--edge) + 56px);
+}
+
+.events-run {
+  position: relative;
+  height: calc(var(--event-count, 1) * 100vh);
+}
+
+.events[hidden] {
+  display: none;
+}
+
+.events-pin {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.events-stage {
+  position: relative;
+  min-width: 0;
+}
+
+.events-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 200%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.events-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 clamp(32px, 7vw, 112px) 0 clamp(16px, 3vw, 48px);
+}
+
+.events-heading {
+  margin: 0;
+  color: #060606;
+  font-size: clamp(48px, 7vw, 104px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.event-details {
+  animation: event-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.event-count {
+  margin-bottom: 18px;
+  color: var(--soft);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.event-title {
+  margin: 0 0 20px;
+  color: #0a0f1c;
+  font-size: clamp(40px, 4.6vw, 72px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 22px;
+}
+
+.event-pill {
+  padding: 6px 12px;
+  color: #fff;
+  background: var(--ink);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.event-result {
+  color: var(--soft);
+  font-size: 16px;
+}
+
+.event-description {
+  max-width: 34em;
+  color: rgba(17, 17, 20, 0.86);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.006em;
+}
+
+.event-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.event-links a {
+  display: inline-block;
+  padding: 7px 13px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #d9d9dd;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.event-links a:hover {
+  background: #f4f4f5;
+}
+
+.event-links a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@keyframes event-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-details {
+    animation: none;
+  }
+}
+
+/* Phones: the poster sits on top, the details underneath. */
+@media (max-width: 800px) {
+  .events-run {
+    height: calc(var(--event-count, 1) * 100svh);
+  }
+
+  .events-pin {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50svh 1fr;
+    height: 100svh;
+  }
+
+  .events-canvas {
+    width: 100%;
+  }
+
+  .events-copy {
+    justify-content: flex-start;
+    padding: 0 24px 24px;
+  }
+
+  .event-count {
+    display: none;
+  }
+
+  .event-title {
+    margin-bottom: 12px;
+    font-size: clamp(32px, 9.5vw, 44px);
+  }
+
+  .event-meta {
+    margin-bottom: 12px;
+  }
+
+  .event-description {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+
+  .event-links {
+    margin-top: 14px;
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "id-card-hero",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --base=./",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.21.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/caveat-brush": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/permanent-marker": "^5.3.0",
+    "@fontsource/young-serif": "^5.3.0",
+    "dseg": "^0.46.0",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  }
+}
