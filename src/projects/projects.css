@@ -26,7 +26,7 @@
 
 .projects-title {
   margin: 0;
-  font-size: clamp(48px, 7vw, 104px);
+  font-size: clamp(30px, 3.6vw, 52px);
   font-weight: 500;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -45,23 +45,7 @@
   transition: height var(--move);
 }
 
-.pstring {
-  position: absolute;
-  top: 0;
-  left: -4%;
-  width: 108%;
-  height: 60px;
-  overflow: visible;
-  pointer-events: none;
-}
-
-.pstring path {
-  fill: none;
-  stroke: #a9abb0;
-  stroke-width: 1;
-}
-
-/* Everything from the pin down moves together, swinging from the point on the string. */
+/* The hanger and ticket move together, swinging from the point on the chain. */
 .phang {
   position: absolute;
   top: 0;
@@ -73,49 +57,6 @@
   transition:
     transform var(--move),
     width var(--move);
-}
-
-.phang:not(.is-open):hover,
-.phang:not(.is-open):focus-within {
-  --swing: 0deg;
-}
-
-.ppin {
-  position: absolute;
-  top: -4px;
-  width: 9px;
-  height: 9px;
-  background: var(--hardware);
-  border-radius: 50%;
-}
-
-.pstem {
-  width: 2px;
-  height: calc(34px + var(--drop));
-  background: var(--hardware);
-  transition: height var(--move);
-}
-
-.pclip {
-  position: relative;
-  z-index: 1;
-  width: 26px;
-  height: 14px;
-  margin-bottom: -4px;
-  background: var(--hardware);
-  border-radius: 9px 9px 3px 3px;
-}
-
-.pclip::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  background: #fff;
-  border-radius: 50%;
-  transform: translateX(-50%);
 }
 
 .pcard {
@@ -315,12 +256,29 @@
   line-height: 1.45;
 }
 
-.pproject-about {
-  flex: 1 1 auto;
-  color: #4a4a50;
+.pproject-block {
+  margin-bottom: 12px;
+}
+
+.pproject-label {
+  margin-bottom: 4px;
+  color: var(--soft);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pproject-points {
+  margin: 0;
+  padding-left: 18px;
+  color: #3f3f46;
   font-size: 14px;
-  line-height: 1.55;
-  white-space: pre-line;
+  line-height: 1.45;
+}
+
+.pproject-points li + li {
+  margin-top: 3px;
 }
 
 .pproject-foot {
@@ -328,7 +286,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-top: 16px;
+  margin-top: auto;
+  padding-top: 8px;
 }
 
 .pproject-tags {
@@ -356,7 +315,6 @@
 @media (prefers-reduced-motion: reduce) {
   .prail,
   .phang,
-  .pstem,
   .pcard {
     transition: none;
   }

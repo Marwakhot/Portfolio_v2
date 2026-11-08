@@ -46,7 +46,7 @@ function inkText(ctx, text, x, baseline, fontSize, color, seed) {
 }
 
 function drawName(ctx, content, card) {
-  const baseSize = 282;
+  const baseSize = 150;
   ctx.font = `600 ${baseSize}px ${DISPLAY_FONT}`;
   ctx.letterSpacing = '-0.02em';
   const widest = Math.max(
@@ -54,46 +54,62 @@ function drawName(ctx, content, card) {
     ctx.measureText(content.lastName).width,
   );
   const size = Math.min(baseSize, (baseSize * (WIDTH - MARGIN * 2)) / widest);
-  inkText(ctx, content.firstName, MARGIN, 282, size, card.firstNameColor, 7);
-  inkText(ctx, content.lastName, MARGIN, 282 + size * 0.86, size, card.lastNameColor, 19);
-}
-
-function drawPill(ctx, x, y, width, height, pill) {
-  ctx.fillStyle = pill.color;
-  ctx.beginPath();
-  ctx.roundRect(x, y, width, height, height / 2);
-  ctx.fill();
-  ctx.fillStyle = '#ffffff';
-  ctx.font = `45px ${TEXT_FONT}`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(pill.label, x + width / 2, y + height / 2 + 2, width - 40);
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'alphabetic';
+  inkText(ctx, content.firstName, MARGIN, 190, size, card.firstNameColor, 7);
+  inkText(ctx, content.lastName, MARGIN, 190 + size * 0.86, size, card.lastNameColor, 19);
 }
 
 function drawDetails(ctx, card) {
-  const right = WIDTH - MARGIN - 42;
-  ctx.fillStyle = '#111111';
+  const width = WIDTH - MARGIN * 2;
   ctx.letterSpacing = '0px';
-  ctx.font = `50px ${TEXT_FONT}`;
-  ctx.fillText(card.currentlyLabel, MARGIN, 832);
-  ctx.font = `46px ${TEXT_FONT}`;
-  ctx.fillText(card.currently, MARGIN, 918, right - MARGIN);
-  ctx.font = `50px ${TEXT_FONT}`;
-  ctx.fillText(card.previouslyLabel, MARGIN, 1030);
 
-  const [wide, left, last] = card.pills;
-  const gap = 80;
-  const half = (right - MARGIN - gap) / 2;
-  drawPill(ctx, MARGIN, 1079, right - MARGIN, 75, wide);
-  drawPill(ctx, MARGIN, 1176, half, 75, left);
-  drawPill(ctx, right - half, 1176, half, 75, last);
-  ctx.fillStyle = '#8a8a8a';
-  ctx.font = `44px ${TEXT_FONT}`;
-  ctx.textAlign = 'center';
-  ctx.fillText('&', MARGIN + half + gap / 2, 1230);
-  ctx.textAlign = 'left';
+  // Each role sits above its coloured box, as large as the longest box allows.
+  let size;
+  for (size of [46, 44, 42, 40, 38, 36]) {
+    ctx.font = `500 ${size}px ${TEXT_FONT}`;
+    if (Math.max(...card.lines.map((line) => ctx.measureText(line.pill).width)) + size * 1.1 <= width) break;
+  }
+
+  // Sits on the bottom of the card, level with the skill chips on the job cards.
+  const height = Math.round(size * 1.6);
+  const top = 1256 - card.lines.length * (50 + height) - (card.lines.length - 1) * 22;
+  let y = top;
+  ctx.textBaseline = 'middle';
+  for (const line of card.lines) {
+    ctx.fillStyle = '#111111';
+    ctx.fillText(line.text, MARGIN, y + 22);
+    y += 50;
+    ctx.fillStyle = line.color;
+    ctx.beginPath();
+    ctx.roundRect(MARGIN, y, ctx.measureText(line.pill).width + size * 1.1, height, height / 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(line.pill, MARGIN + size * 0.55, y + height / 2 + 2);
+    y += height + 22;
+  }
+  ctx.textBaseline = 'alphabetic';
+  return top;
+}
+
+// The photo fills the empty space between the name and the boxes.
+async function drawPhoto(ctx, url, top, bottom) {
+  let image;
+  try {
+    image = await loadImage(url);
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+  const box = { x: MARGIN, y: top, width: WIDTH - MARGIN * 2, height: bottom - top };
+  const scale = Math.max(box.width / image.width, box.height / image.height);
+  const width = image.width * scale;
+  const height = image.height * scale;
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(box.x, box.y, box.width, box.height, 28);
+  ctx.clip();
+  // Anchored a little above centre so the face stays in frame.
+  ctx.drawImage(image, box.x + (box.width - width) / 2, box.y + (box.height - height) * 0.35, width, height);
+  ctx.restore();
 }
 
 function loadImage(url) {
@@ -122,36 +138,10 @@ export async function drawArtwork(content, card) {
     return canvas;
   }
 
-  if (card.photo) {
-    paintPaper(ctx);
-    await drawPhoto(ctx, card.photo);
-  } else {
-    ctx.drawImage(namePlate(content, card), 0, 0);
-  }
-  drawDetails(ctx, card);
+  ctx.drawImage(namePlate(content, card), 0, 0);
+  const detailsTop = drawDetails(ctx, card);
+  if (card.photo) await drawPhoto(ctx, card.photo, 356, detailsTop - 34);
   return canvas;
-}
-
-// The photo fills the top of the card, where the name would otherwise be.
-async function drawPhoto(ctx, url) {
-  let image;
-  try {
-    image = await loadImage(url);
-  } catch (error) {
-    console.error(error);
-    return;
-  }
-  const box = { x: MARGIN, y: MARGIN, width: WIDTH - MARGIN * 2, height: 700 };
-  const scale = Math.max(box.width / image.width, box.height / image.height);
-  const width = image.width * scale;
-  const height = image.height * scale;
-  ctx.save();
-  ctx.beginPath();
-  ctx.roundRect(box.x, box.y, box.width, box.height, 28);
-  ctx.clip();
-  // Anchored a little above centre so the face stays in frame.
-  ctx.drawImage(image, box.x + (box.width - width) / 2, box.y + (box.height - height) * 0.35, width, height);
-  ctx.restore();
 }
 
 // The paper and inked name are slow to make and never change, so they're made once.
@@ -167,53 +157,57 @@ function namePlate(content, card) {
   return plate;
 }
 
-function wrap(ctx, text, width) {
-  const lines = [''];
-  for (const word of text.split(' ')) {
-    const next = lines.at(-1) ? `${lines.at(-1)} ${word}` : word;
-    if (ctx.measureText(next).width > width && lines.at(-1)) lines.push(word);
-    else lines[lines.length - 1] = next;
-  }
-  return lines;
+// The same card, printed with the skills from one stop on the timeline.
+function drawJob(ctx, job) {
+  ctx.letterSpacing = '0px';
+  ctx.fillStyle = '#111111';
+  ctx.font = `600 58px ${DISPLAY_FONT}`;
+  ctx.fillText('Skill set:', MARGIN, 425);
+  drawSkills(ctx, job.skills, job.cardColor, WIDTH - MARGIN * 2 - 42, 470, 1256);
 }
 
-// The same card, printed with the details of one job from the timeline.
-function drawJob(ctx, job) {
-  const right = WIDTH - MARGIN - 42;
-  const width = right - MARGIN;
-  const write = (lines, y, step) => {
-    lines.forEach((line, index) => ctx.fillText(line, MARGIN, y + index * step));
-    return y + lines.length * step;
-  };
+// Skill chips, flowed into rows directly under the heading, as large as they fit.
+function drawSkills(ctx, skills, color, width, top, bottom) {
+  const gap = 14;
+  let rows;
+  let size;
+  let height;
+  let padding;
+  for (size of [66, 60, 54, 48, 42, 36]) {
+    ctx.font = `${size}px ${TEXT_FONT}`;
+    height = Math.round(size * 1.6);
+    padding = size * 0.55;
+    rows = [[]];
+    let used = 0;
+    let tooWide = false;
+    for (const label of skills) {
+      const chip = ctx.measureText(label).width + padding * 2;
+      tooWide ||= chip > width;
+      if (used && used + gap + chip > width) {
+        rows.push([]);
+        used = 0;
+      }
+      rows.at(-1).push({ label, width: chip });
+      used += (used ? gap : 0) + chip;
+    }
+    if (!tooWide && rows.length * (height + gap) - gap <= bottom - top) break;
+  }
 
-  ctx.letterSpacing = '0px';
-  ctx.fillStyle = '#111111';
-  ctx.font = `46px ${TEXT_FONT}`;
-  ctx.fillText(job.current ? 'Currently' : 'Previously', MARGIN, 590);
-  ctx.fillStyle = '#8a8a8a';
-  ctx.font = `40px ${TEXT_FONT}`;
-  ctx.textAlign = 'right';
-  ctx.fillText(job.year, right, 590);
-  ctx.textAlign = 'left';
-
-  ctx.fillStyle = job.cardColor;
-  ctx.font = `600 70px ${DISPLAY_FONT}`;
-  ctx.letterSpacing = '-0.02em';
-  let y = write(wrap(ctx, job.company, width), 690, 80);
-  ctx.letterSpacing = '0px';
-
-  ctx.fillStyle = '#111111';
-  ctx.font = `48px ${TEXT_FONT}`;
-  write(wrap(ctx, job.role, width), y - 6, 56);
-
-  const pillTop = 1170;
-
-  const pills = job.projects.slice(0, 2);
-  const gap = 20;
-  const pillWidth = (width - gap * (pills.length - 1)) / pills.length;
-  pills.forEach((item, index) => {
-    drawPill(ctx, MARGIN + index * (pillWidth + gap), pillTop, pillWidth, 75, { label: item.title, color: job.cardColor });
+  ctx.textBaseline = 'middle';
+  rows.forEach((row, rowIndex) => {
+    const y = top + rowIndex * (height + gap);
+    let x = MARGIN;
+    for (const chip of row) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x, y, chip.width, height, height / 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(chip.label, x + padding, y + height / 2 + 2);
+      x += chip.width + gap;
+    }
   });
+  ctx.textBaseline = 'alphabetic';
 }
 
 export function drawJobArtworks(content, card, jobs) {

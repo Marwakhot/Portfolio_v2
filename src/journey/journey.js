@@ -31,38 +31,47 @@ function dot(variant) {
   return node;
 }
 
-function project(item) {
-  const row = el('li', 'tl-case');
-  const card = linkOrSpan(item.href, 'case');
-  card.append(el('span', 'case-title', item.title), el('span', 'case-desc', item.description));
-  row.append(card);
-  return row;
-}
-
 function entry(item) {
   const row = el('li', 'tl-entry');
   const year = el('span', 'tl-year');
-  year.append(el('span', 'tl-yearnum', item.year), el('span', 'tl-route', item.route));
+  year.append(el('span', 'tl-yearnum', item.dates));
 
   const head = el('span', 'tl-head');
   const company = linkOrSpan(item.href, 'tl-company');
   company.textContent = `${item.role} @ ${item.company}`;
+  if (item.logo) {
+    const logo = el('img', 'tl-logo');
+    logo.src = item.logo;
+    logo.alt = '';
+    head.append(logo);
+  }
   head.append(company);
   if (item.current) head.append(el('span', 'tl-badge', 'Current'));
 
   const body = el('div', 'tl-body');
-  body.append(head, el('p', 'tl-desc', item.description));
-  if (item.projects?.length) {
-    const list = el('ul', 'tl-cases');
-    list.append(...item.projects.map(project));
+  body.append(head);
+  if (item.description) body.append(el('p', 'tl-desc', item.description));
+  if (item.built?.length) {
+    const list = el('ul', 'tl-built');
+    list.append(...item.built.map((text) => el('li', '', text)));
     body.append(list);
+  }
+  if (item.gallery?.length) {
+    const gallery = el('div', 'tl-gallery');
+    for (const shot of item.gallery) {
+      const image = el('img', shot.wide ? 'is-wide' : undefined);
+      image.src = shot.src;
+      image.alt = shot.alt;
+      gallery.append(image);
+    }
+    body.append(gallery);
   }
   row.append(year, dot(item.current ? 'now' : 'past'), body);
   return row;
 }
 
-function plane() {
-  const icon = svg('svg', { class: 'plan-plane', viewBox: '0 0 16 15', fill: 'none', 'aria-hidden': 'true' });
+export function plane(className = 'plan-plane') {
+  const icon = svg('svg', { class: className, viewBox: '0 0 16 15', fill: 'none', 'aria-hidden': 'true' });
   svg(
     'path',
     {

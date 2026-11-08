@@ -43,7 +43,7 @@
 .journey-top {
   position: relative;
   flex: none;
-  padding: clamp(32px, 8vh, 72px) var(--edge) 0;
+  padding: clamp(140px, 26vh, 260px) var(--edge) 0;
 }
 
 .folio-sticky {
@@ -164,6 +164,19 @@
   min-height: 80vh;
 }
 
+.tl-entry:nth-child(1) {
+  margin-bottom: 32px;
+}
+
+.tl-entry:nth-child(2),
+.tl-entry:nth-child(3) {
+  min-height: 26vh;
+}
+
+.tl-entry:nth-child(4) {
+  min-height: 30vh;
+}
+
 .tl-entry > .tl-year,
 .tl-entry > .tl-body {
   opacity: 0.3;
@@ -211,13 +224,6 @@
   font-size: 12px;
   line-height: 14px;
   letter-spacing: 1.05px;
-}
-
-.tl-route {
-  color: var(--tl-route);
-  font-size: 9px;
-  letter-spacing: 0.9px;
-  white-space: nowrap;
 }
 
 .tl-dot {
@@ -277,6 +283,27 @@
   padding-top: 10px;
 }
 
+.tl-gallery {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.tl-gallery img {
+  display: block;
+  width: min(30%, 150px);
+  aspect-ratio: 591 / 1280;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(17, 17, 20, 0.18);
+}
+
+.tl-gallery img.is-wide {
+  width: min(48%, 300px);
+  aspect-ratio: 728 / 427;
+  border-radius: 10px;
+}
+
 .tl-head {
   display: flex;
   flex-wrap: wrap;
@@ -284,7 +311,25 @@
   gap: 2px 10px;
 }
 
+.tl-head:has(.tl-logo) {
+  flex-wrap: nowrap;
+}
+
+.tl-logo {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border: 1px solid #e7e5e5;
+  border-radius: 9px;
+}
+
+.tl-badge {
+  flex: none;
+}
+
 .tl-company {
+  min-width: 0;
   color: var(--folio-ink);
   font-size: 26px;
   font-weight: 500;
@@ -326,35 +371,18 @@ a.tl-company:hover {
   opacity: 0.8;
 }
 
-.journey .tl-cases {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 14px;
+.journey .tl-built {
+  margin-top: 10px;
+  padding-left: 18px;
+  color: var(--folio-body);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.12px;
+  list-style: disc;
 }
 
-.case {
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-}
-
-a.case:hover .case-title {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.case-title {
-  color: var(--ink-title);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-.case-desc {
-  color: var(--ink-desc);
-  font-size: 13px;
-  line-height: 1.45;
+.tl-built li + li {
+  margin-top: 6px;
 }
 
 .folio-outro {
@@ -463,7 +491,7 @@ a.case:hover .case-title {
 .folio-heading {
   margin: 0;
   color: var(--folio-ink);
-  font-size: clamp(28px, 3vw, 44px);
+  font-size: clamp(30px, 3.6vw, 52px);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.04em;

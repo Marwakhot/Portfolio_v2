@@ -132,7 +132,7 @@
   position: absolute;
   inset: 0;
   color: #fff;
-  font-size: clamp(30px, 3.6vw, 64px);
+  font-size: clamp(24px, 2.5vw, 42px);
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.04em;
@@ -154,6 +154,51 @@
   right: 5vw;
   bottom: 18%;
   text-align: right;
+}
+
+.cabin-copy .cabin-scroll {
+  bottom: 4vh;
+  left: 50%;
+  width: auto;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.cabin-skip {
+  position: absolute;
+  top: 4vh;
+  right: 5vw;
+  padding: 4px 0;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  pointer-events: auto;
+}
+
+.cabin-skip:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Kept on the graphics card, so zooming and drifting don't redraw these huge images. */
+.jet,
+.jet-lift,
+.sky-photo,
+.cloud-layer {
+  will-change: transform;
+}
+
+.jet-stage {
+  will-change: opacity;
 }
 
 /* The card stays on screen from its white page down to the end of the timeline. */

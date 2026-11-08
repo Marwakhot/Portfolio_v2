@@ -1,6 +1,6 @@
 import { boardingPass, content } from '../config.js';
 
-const HINT = 'Insert your boarding pass to continue.';
+const HINT = 'Drag your boarding pass through the reader to continue.';
 const GRANTED = 'Access granted';
 const PAUSE_AFTER_SWIPE_MS = 800;
 const DISSOLVE_MS = 1600; // matches the dissolve in gate.css
@@ -24,14 +24,14 @@ export function setUpGate(section, { onEnter, onGone }) {
   async function enter() {
     if (entered) return;
     entered = true;
+    // Stops drawing first; the last frame stays on screen, so the page being built
+    // underneath can't make the 3D scene stutter, and the dissolve stays smooth.
+    scene?.setVisible(false);
     await Promise.race([onEnter(), new Promise((resolve) => setTimeout(resolve, LONGEST_HERO_WAIT_MS))]);
     // Let the page underneath draw its first frames, which is the slowest part, so
     // that work can't interrupt the dissolve.
     await nextFrame();
     await nextFrame();
-
-    // Stops drawing, so the dissolve stays smooth; the last frame stays on screen.
-    scene?.setVisible(false);
 
     let gone = false;
     const finish = () => {

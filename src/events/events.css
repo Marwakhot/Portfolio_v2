@@ -1,136 +1,272 @@
 .events {
   --ink: #111114;
-  --soft: rgba(17, 17, 20, 0.72);
+  --soft: rgba(17, 17, 20, 0.66);
+  --paper: #fbf8f0;
   position: relative;
   color: var(--ink);
   background: #fff;
-}
-
-.events-head {
-  padding: clamp(96px, 16vh, 160px) var(--edge) 0 calc(var(--edge) + 56px);
-}
-
-.events-run {
-  position: relative;
-  height: calc(var(--event-count, 1) * 100vh);
 }
 
 .events[hidden] {
   display: none;
 }
 
+.events-run {
+  position: relative;
+  height: calc(100vh + (var(--event-count, 1) - 1) * 75vh);
+}
+
 .events-pin {
   position: sticky;
   top: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   overflow: hidden;
 }
 
-.events-stage {
-  position: relative;
-  min-width: 0;
-}
-
-.events-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 200%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.events-copy {
-  position: relative;
-  z-index: 1;
+.events-head {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
-  padding: 0 clamp(32px, 7vw, 112px) 0 clamp(16px, 3vw, 48px);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(36px, 8vh, 80px) var(--edge) 0 calc(var(--edge) + 56px);
 }
 
 .events-heading {
   margin: 0;
   color: #060606;
-  font-size: clamp(48px, 7vw, 104px);
+  font-size: clamp(30px, 3.6vw, 52px);
   font-weight: 500;
   line-height: 1;
   letter-spacing: -0.04em;
 }
 
-.event-details {
-  animation: event-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* The plane parks on the dot here while the cards slide. */
+.way-plane {
+  position: absolute;
+  top: 50%;
+  left: calc(-56px + 7.5px);
+  z-index: 5;
+  display: block;
+  width: 18px;
+  height: 17px;
+  color: #3a53ed;
+  visibility: hidden;
+  transform: translate(-50%, -50%) rotate(180deg);
 }
 
-.event-count {
-  margin-bottom: 18px;
+.way-plane.is-on {
+  visibility: visible;
+}
+
+.flight-line.is-parked .plan-plane {
+  visibility: hidden;
+}
+
+.events-count {
+  margin: 0 0 6px;
   color: var(--soft);
-  font-size: 12px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
-}
-
-.event-title {
-  margin: 0 0 20px;
-  color: #0a0f1c;
-  font-size: clamp(40px, 4.6vw, 72px);
-  font-weight: 500;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  text-wrap: balance;
-}
-
-.event-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-  margin-bottom: 22px;
-}
-
-.event-pill {
-  padding: 6px 12px;
-  color: #fff;
-  background: var(--ink);
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
   white-space: nowrap;
 }
 
-.event-result {
+/* Cards are cut off to the right of the flight line, so they never slide under it. */
+.events-view {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-height: 0;
+  margin-left: calc(var(--edge) + 28px);
+  overflow: clip;
+  mask-image: linear-gradient(to right, transparent, #000 28px);
+}
+
+.postcards {
+  display: flex;
+  flex: none;
+  gap: clamp(28px, 4vw, 64px);
+  width: max-content;
+  margin: 0;
+  padding: 20px var(--edge) 20px 28px;
+  list-style: none;
+  will-change: transform;
+}
+
+.postcard {
+  flex: none;
+  width: min(58vw, 760px);
+  height: min(calc(100vh - 260px), 460px);
+  padding: 9px;
+  background: repeating-linear-gradient(-45deg, var(--stripe-a) 0 16px, var(--paper) 16px 32px, var(--stripe-b) 32px 48px, var(--paper) 48px 64px);
+  border-radius: 4px;
+  box-shadow: 0 14px 32px rgba(17, 17, 20, 0.1), 0 2px 5px rgba(17, 17, 20, 0.07);
+  transform: rotate(var(--tilt));
+}
+
+.postcard-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.postcard-photos {
+  display: grid;
+  gap: 6px;
+  min-height: 0;
+  padding: 12px;
+}
+
+.postcard-photos.is-double {
+  grid-template-rows: 1fr 1fr;
+}
+
+.postcard-photos img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+
+.postcard-back {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  display: block;
+  padding: 20px;
+  overflow: hidden;
+  border-left: 1px solid #d8d1bf;
+}
+
+.stamp {
+  float: right;
+  width: 72px;
+  height: 88px;
+  margin: 0 0 40px 14px; /* leaves room for the postmark under the stamp */
+  background: #fff;
+  border: 6px dotted var(--paper);
+  background-clip: border-box;
+  filter: drop-shadow(0 1px 2px rgba(17, 17, 20, 0.28));
+}
+
+.stamp-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: -1px;
+  color: #2a2a33;
+  text-align: center;
+  background: var(--stamp);
+}
+
+.stamp-top {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stamp-bottom {
+  margin-top: 4px;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.postmark {
+  position: absolute;
+  top: 72px;
+  right: 20px;
+  z-index: 1;
+  width: 72px;
+  height: 72px;
+  opacity: 0.62;
+  transform: rotate(-14deg);
+  pointer-events: none;
+}
+
+.postmark circle {
+  fill: none;
+  stroke: #33343d;
+  stroke-width: 2;
+}
+
+.postmark text {
+  fill: #33343d;
+  font-weight: 600;
+}
+
+.postmark-ring {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+}
+
+.postmark-year {
+  font-size: 17px;
+}
+
+.postcard-title {
+  margin: 0 0 10px;
+  color: #0a0f1c;
+  font-size: clamp(19px, 1.8vw, 26px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.postcard-message {
+  margin: 0;
+  color: rgba(17, 17, 20, 0.84);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.postcard-foot {
+  position: absolute;
+  right: 20px;
+  bottom: 16px;
+  left: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.postcard-place {
+  flex: 1 1 100%;
+  margin: 0;
+  padding-bottom: 8px;
   color: var(--soft);
-  font-size: 16px;
+  font-size: 13px;
+  border-bottom: 1px solid #d8d1bf;
 }
 
-.event-description {
-  max-width: 34em;
-  color: rgba(17, 17, 20, 0.86);
-  font-size: 16px;
-  line-height: 1.6;
-  letter-spacing: -0.006em;
-}
-
-.event-links {
+.postcard-links {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 24px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.event-links a {
+.postcard-links a {
   display: inline-block;
-  padding: 7px 13px;
+  padding: 6px 12px;
   color: var(--ink);
-  background: #fff;
-  border: 1px solid #d9d9dd;
+  border: 1px solid #c9c2b0;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 500;
@@ -138,76 +274,102 @@
   transition: background 0.2s ease;
 }
 
-.event-links a:hover {
-  background: #f4f4f5;
+.postcard-links a:hover {
+  background: #fff;
 }
 
-.event-links a:focus-visible {
+.postcard-links a:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 
-@keyframes event-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .event-details {
-    animation: none;
-  }
-}
-
-/* Phones: the poster sits on top, the details underneath. */
+/* Phones: photos on top, the written side underneath. */
 @media (max-width: 800px) {
   .events-run {
-    height: calc(var(--event-count, 1) * 100svh);
+    height: calc(100svh + (var(--event-count, 1) - 1) * 75svh);
   }
 
   .events-pin {
-    grid-template-columns: 1fr;
-    grid-template-rows: 50svh 1fr;
     height: 100svh;
   }
 
-  .events-canvas {
-    width: 100%;
+  .events-head {
+    padding-top: 28px;
   }
 
-  .events-copy {
-    justify-content: flex-start;
-    padding: 0 24px 24px;
-  }
-
-  .event-count {
+  .events-count {
     display: none;
   }
 
-  .event-title {
-    margin-bottom: 12px;
-    font-size: clamp(32px, 9.5vw, 44px);
+  .postcards {
+    padding-left: 16px;
   }
 
-  .event-meta {
-    margin-bottom: 12px;
+  .events-view {
+    mask-image: linear-gradient(to right, transparent, #000 16px);
   }
 
-  .event-description {
-    display: -webkit-box;
-    overflow: hidden;
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
+  .postcard {
+    width: calc(100vw - var(--edge) - 76px);
+    height: min(calc(100svh - 130px), 540px);
   }
 
-  .event-links {
-    margin-top: 14px;
+  .postcard-inner {
+    grid-template-columns: 1fr;
+    grid-template-rows: 30% 1fr;
+  }
+
+  .postcard-photos {
+    padding: 8px;
+  }
+
+  .postcard-photos.is-double {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .postcard-back {
+    padding: 14px;
+    border-top: 1px solid #d8d1bf;
+    border-left: 0;
+  }
+
+  .stamp {
+    width: 60px;
+    height: 74px;
+    margin-bottom: 8px;
+    border-width: 5px;
+  }
+
+  .stamp-top {
+    font-size: 16px;
+  }
+
+  .stamp-bottom {
+    margin-top: 3px;
+    font-size: 7px;
+  }
+
+  .postmark {
+    top: 12px;
+    right: 62px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .postcard-title {
+    padding-right: 34px;
+    font-size: 20px;
+  }
+
+  .postcard-foot {
+    right: 14px;
+    bottom: 12px;
+    left: 14px;
+  }
+
+  .postcard-message {
+    font-size: 14px;
+    line-height: 1.42;
   }
 }

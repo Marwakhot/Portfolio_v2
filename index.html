@@ -22,9 +22,9 @@
     </div>
 
     <main inert>
-      <div class="cabin-run" aria-hidden="true">
+      <div class="cabin-run">
         <div class="cabin">
-          <div class="jet-stage">
+          <div class="jet-stage" aria-hidden="true">
             <div class="jet">
               <img src="/jet/hero-back.webp" alt="" />
               <div class="jet-window">
@@ -41,7 +41,7 @@
             </div>
             <div class="jet-overlay"></div>
           </div>
-          <div class="cabin-copy"><p class="cruising-left"></p><p class="cruising-right"></p></div>
+          <div class="cabin-copy"><p class="cruising-left"></p><p class="cruising-right"></p><p class="cabin-scroll">Scroll</p><button class="cabin-skip" type="button">Skip to experience →</button></div>
         </div>
       </div>
 
@@ -51,13 +51,12 @@
       <div class="badge-rail"><div class="badge"><canvas></canvas></div></div>
 
       <section class="hero" aria-label="Introduction">
-        <p class="intro"></p>
-        <p class="education"></p>
-        <h1><span class="first"></span> <span class="last"></span></h1>
-        <div class="mobile-copy">
-          <p class="lead"></p>
-          <p class="meta"></p>
+        <p class="hero-line"></p>
+        <div class="hero-side">
+          <p class="hero-class"></p>
+          <nav class="hero-links" aria-label="Contact"></nav>
         </div>
+        <h1><span class="first"></span> <span class="last"></span></h1>
       </section>
 
       <section class="journey" aria-label="Experience" hidden></section>
@@ -66,6 +65,10 @@
       <section class="events" aria-label="Hackathons and events" hidden></section>
 
       <section class="projects" aria-label="Projects" hidden></section>
+
+      <section class="landing" aria-label="Descent and landing" hidden></section>
+
+      <section class="arrivals" aria-label="Arrivals and contact" hidden></section>
     </main>
     <script type="module" src="/src/main.js"></script>
   </body>

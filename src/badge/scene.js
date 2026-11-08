@@ -486,8 +486,17 @@ export async function createBadgeScene(canvas, artwork) {
     camera.aspect = width / height;
     camera.fov = width < SMALL_SCREEN ? 43 : 36;
     camera.position.z = cameraDistance(width, camera.aspect);
-    // Slides the whole picture sideways, so the card can still be dragged anywhere on the page.
-    const shift = width < SMALL_SCREEN ? 0 : width * CARD_SHIFT;
+    applySide();
+  }
+
+  // Slides the whole picture sideways, so the card can still be dragged anywhere on the page.
+  // 0 is the middle of the page, 1 is the right-hand side.
+  let side = 0;
+  let sideTarget = 0;
+  function applySide() {
+    const { width, height } = canvas.getBoundingClientRect();
+    if (!width || !height) return;
+    const shift = width < SMALL_SCREEN ? 0 : width * CARD_SHIFT * side;
     camera.setViewOffset(width, height, -shift, 0, width, height);
   }
   new ResizeObserver(resize).observe(canvas);
@@ -566,6 +575,12 @@ export async function createBadgeScene(canvas, artwork) {
 
     const delta = Math.min((time - (lastTime || time)) / 1000, 0.05);
     lastTime = time;
+
+    if (side !== sideTarget) {
+      side += (sideTarget - side) * (1 - Math.exp(-delta * 10));
+      if (Math.abs(sideTarget - side) < 0.001) side = sideTarget;
+      applySide();
+    }
     accumulator += delta;
     while (accumulator >= world.timestep) {
       step();
@@ -632,6 +647,9 @@ export async function createBadgeScene(canvas, artwork) {
   return {
     // A harder swing, for when the card first drops into view.
     pop: () => knock(2.5),
+    setSide(next) {
+      sideTarget = next;
+    },
     // Swaps what's printed on the card, with a small swing so the change reads as physical.
     setArtwork(next) {
       const texture = cardGroup.userData.artwork;

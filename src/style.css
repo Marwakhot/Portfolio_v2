@@ -36,60 +36,74 @@ p {
   background: #fff;
 }
 
-.intro,
-.education {
+/* Small serif text either side of the card: the line on the left, class and links on the right. */
+.hero-line,
+.hero-side {
   position: absolute;
-  top: 100px;
+  top: clamp(72px, 13vh, 124px);
   z-index: 3;
-  font-size: 1rem;
+  color: #111114;
+  font-family: 'Young Serif', Georgia, serif;
+  font-size: clamp(15px, 1.15vw, 20px);
+  line-height: 1.35;
+}
+
+.hero-line {
+  left: var(--page-gutter);
+  width: min(30vw, 460px);
+  font-size: clamp(20px, 1.75vw, 30px);
   line-height: 1.25;
-  letter-spacing: -0.02em;
   pointer-events: none;
 }
 
-.intro {
-  left: var(--page-gutter);
+.hero-side {
+  right: var(--page-gutter);
+  text-align: right;
 }
 
-/* The intro and role sit together on the left, clear of the card and its straps. */
-.education {
-  top: 150px;
-  left: var(--page-gutter);
-}
-
-.more {
-  color: #8a8792;
-  pointer-events: auto;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  transition: color 0.15s;
-}
-
-.more:hover {
-  color: #080808;
-}
-
-.more:focus-visible {
-  border-radius: 2px;
-  outline: 2px solid #7950ef;
-  outline-offset: 3px;
-}
-
-/* The big name stays on the left, so it never runs behind the card. */
-h1 {
-  position: absolute;
-  bottom: 3vw;
-  left: calc(var(--page-gutter) - 0.05em);
-  font-size: 14vw;
-  font-weight: 500;
-  line-height: 0.92;
-  letter-spacing: -0.05em;
+.hero-links {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2px 20px;
+  margin-top: 6px;
   white-space: nowrap;
 }
 
-h1 span {
-  display: block;
+.hero-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: #b5b3bb;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.hero-links a:hover {
+  color: #0a28ff;
+  text-decoration-color: currentColor;
+}
+
+.hero-links a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid #0a28ff;
+  outline-offset: 3px;
+}
+
+
+/* One heavy serif line across the whole page, with the card hanging in front of it.
+   The exact size is set in main.js so it always fits the screen. */
+h1 {
+  position: absolute;
+  bottom: 3vw;
+  left: 50%;
+  color: #0a0a0a;
+  font-family: 'Young Serif', Georgia, serif;
+  font-size: 16vw;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .badge {
@@ -116,10 +130,6 @@ h1 span {
   transform: translateX(-50%);
 }
 
-.mobile-copy {
-  display: none;
-}
-
 @media (width <= 700px) {
   .hero {
     display: flex;
@@ -129,17 +139,39 @@ h1 span {
     padding: 0 24px max(36px, env(safe-area-inset-bottom));
   }
 
-  .intro,
-  .education {
-    display: none;
+  .hero-line,
+  .hero-side {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    flex: none;
+  }
+
+  .hero-line {
+    width: auto;
+    padding-top: 20px;
+  }
+
+  .hero-side {
+    margin-top: 8px;
+    text-align: left;
+  }
+
+  .hero-links {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   h1 {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
+    position: relative;
+    bottom: auto;
+    left: auto;
+    z-index: 1;
+    flex: none;
+    align-self: flex-start;
+    margin-top: auto;
+    transform: none;
   }
 
   .badge {
@@ -148,27 +180,6 @@ h1 span {
     flex: 1 1 0;
     min-height: 0;
     margin: 0 -24px 8px;
-  }
-
-  .mobile-copy {
-    position: relative;
-    z-index: 2;
-    display: block;
-  }
-
-  .lead {
-    margin-bottom: 12px;
-    font-size: 28px;
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    text-wrap: balance;
-  }
-
-  .meta {
-    color: #77747f;
-    font-size: 16px;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
   }
 }
 
