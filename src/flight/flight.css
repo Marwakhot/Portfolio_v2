@@ -41,8 +41,8 @@
   animation: cloud-drift var(--speed, 150s) linear infinite;
 }
 
-.cloud-layer:nth-child(3) .cloud-drift { --speed: 110s; }
-.cloud-layer:nth-child(4) .cloud-drift { --speed: 75s; }
+/* The near strips only rush past during the push, where sideways drift can't be seen and costs a lot. */
+.cloud-layer:nth-child(n + 3) .cloud-drift { animation: none; }
 
 @keyframes cloud-drift {
   to {

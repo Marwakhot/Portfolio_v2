@@ -637,6 +637,8 @@ export async function createBadgeScene(canvas, artwork) {
   if (!motionQuery.matches) {
     cardBody.applyImpulseAtPoint(vec3(0.4, 0, 0.04), vec3(0, physics.restY - 0.7, 0), true);
   }
+  // Builds the shaders now, behind the gate, instead of freezing a fast scroll into the card.
+  renderer.render(scene, camera);
   frame = requestAnimationFrame(tick);
 
   function knock(strength) {
