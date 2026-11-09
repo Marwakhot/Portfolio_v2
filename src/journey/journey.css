@@ -488,6 +488,39 @@ a.tl-company:hover {
   }
 }
 
+/* The card stays on the first screen here, so the timeline gets the full width. */
+@media (max-width: 700px) {
+  .folio-track {
+    width: auto;
+    margin-right: var(--edge);
+  }
+
+  .tl-entry:nth-child(n) {
+    min-height: 0;
+    margin-bottom: 48px;
+  }
+
+  .tl-company {
+    font-size: 21px;
+  }
+
+  .tl-head:has(.tl-logo) {
+    flex-wrap: wrap;
+  }
+
+  .tl-head:has(.tl-logo) .tl-company {
+    flex: 1 1 calc(100% - 46px);
+  }
+
+  .tl-head:has(.tl-logo) .tl-badge {
+    margin-left: 46px;
+  }
+
+  .folio-outro {
+    padding-bottom: 12vh;
+  }
+}
+
 .folio-heading {
   margin: 0;
   color: var(--folio-ink);

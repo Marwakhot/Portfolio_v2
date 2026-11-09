@@ -256,3 +256,62 @@
     animation: none;
   }
 }
+
+/* The card has no room beside the timeline, so on phones it stays on its own first screen. */
+@media (max-width: 700px) {
+  .badge-rail {
+    bottom: auto;
+    height: max(100svh, 520px);
+  }
+
+  .badge {
+    position: relative;
+    height: 100%;
+  }
+}
+
+/* The whole window fits on a tall screen, so the wall art is shorter than the screen. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .jet {
+    width: 320vw;
+    margin-left: -160vw;
+    margin-top: -80vw;
+  }
+
+  /* The wall carries on above and below the art: its edge strip, stretched and flipped to meet it. */
+  .jet::before,
+  .jet::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    left: 0;
+    z-index: 1; /* over the lifted shade, which slides up past the top of the art */
+    height: 100%;
+    background: url('/jet/hero-front.webp') no-repeat;
+    background-size: 100% 2000%;
+    transform: scaleY(-1);
+  }
+
+  .jet::before {
+    bottom: 100%;
+    background-position: top;
+  }
+
+  .jet::after {
+    top: 100%;
+    background-position: bottom;
+  }
+
+  /* Above and below the window instead of across it. */
+  .cabin-copy p {
+    width: 80vw;
+  }
+
+  .cruising-left {
+    top: 10vh;
+  }
+
+  .cruising-right {
+    bottom: 10vh;
+  }
+}
