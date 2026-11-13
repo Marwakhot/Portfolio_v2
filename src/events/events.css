@@ -1,375 +1,291 @@
+/* Rows that light up on hover and fan out three photo cards beside the title. They scroll up
+   through the fixed stage under a pinned heading; journey.js moves them. */
 .events {
-  --ink: #111114;
-  --soft: rgba(17, 17, 20, 0.66);
-  --paper: #fbf8f0;
-  position: relative;
-  color: var(--ink);
-  background: #fff;
-}
-
-.events[hidden] {
-  display: none;
-}
-
-.events-run {
-  position: relative;
-  height: calc(100vh + (var(--event-count, 1) - 1) * 75vh);
-}
-
-.events-pin {
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.events-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  padding: clamp(36px, 8vh, 80px) var(--edge) 0 calc(var(--edge) + 56px);
-}
-
-.events-heading {
-  margin: 0;
-  color: #060606;
-  font-size: clamp(30px, 3.6vw, 52px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-
-/* The plane parks on the dot here while the cards slide. */
-.way-plane {
+  --rows-top: calc(clamp(72px, 12vh, 120px) + 76px);
   position: absolute;
-  top: 50%;
-  left: calc(-56px + 7.5px);
-  z-index: 5;
-  display: block;
-  width: 18px;
-  height: 17px;
-  color: #3a53ed;
+  inset: 0;
   visibility: hidden;
-  transform: translate(-50%, -50%) rotate(180deg);
-}
-
-.way-plane.is-on {
-  visibility: visible;
-}
-
-.flight-line.is-parked .plan-plane {
-  visibility: hidden;
-}
-
-.events-count {
-  margin: 0 0 6px;
-  color: var(--soft);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-/* Cards are cut off to the right of the flight line, so they never slide under it. */
-.events-view {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  min-height: 0;
-  margin-left: calc(var(--edge) + 28px);
-  overflow: clip;
-  mask-image: linear-gradient(to right, transparent, #000 28px);
-}
-
-.postcards {
-  display: flex;
-  flex: none;
-  gap: clamp(28px, 4vw, 64px);
-  width: max-content;
-  margin: 0;
-  padding: 20px var(--edge) 20px 28px;
-  list-style: none;
-  will-change: transform;
-}
-
-.postcard {
-  flex: none;
-  width: min(58vw, 760px);
-  height: min(calc(100vh - 260px), 460px);
-  padding: 9px;
-  background: repeating-linear-gradient(-45deg, var(--stripe-a) 0 16px, var(--paper) 16px 32px, var(--stripe-b) 32px 48px, var(--paper) 48px 64px);
-  border-radius: 4px;
-  box-shadow: 0 14px 32px rgba(17, 17, 20, 0.1), 0 2px 5px rgba(17, 17, 20, 0.07);
-  transform: rotate(var(--tilt));
-}
-
-.postcard-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100%;
-  overflow: hidden;
-  background: var(--paper);
-}
-
-.postcard-photos {
-  display: grid;
-  gap: 6px;
-  min-height: 0;
-  padding: 12px;
-}
-
-.postcard-photos.is-double {
-  grid-template-rows: 1fr 1fr;
-}
-
-.postcard-photos img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  object-fit: cover;
-  object-position: 50% 30%;
-}
-
-.postcard-back {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  display: block;
-  padding: 20px;
-  overflow: hidden;
-  border-left: 1px solid #d8d1bf;
-}
-
-.stamp {
-  float: right;
-  width: 72px;
-  height: 88px;
-  margin: 0 0 40px 14px; /* leaves room for the postmark under the stamp */
-  background: #fff;
-  border: 6px dotted var(--paper);
-  background-clip: border-box;
-  filter: drop-shadow(0 1px 2px rgba(17, 17, 20, 0.28));
-}
-
-.stamp-face {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  margin: -1px;
-  color: #2a2a33;
-  text-align: center;
-  background: var(--stamp);
-}
-
-.stamp-top {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-
-.stamp-bottom {
-  margin-top: 4px;
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.postmark {
-  position: absolute;
-  top: 72px;
-  right: 20px;
-  z-index: 1;
-  width: 72px;
-  height: 72px;
-  opacity: 0.62;
-  transform: rotate(-14deg);
   pointer-events: none;
 }
 
-.postmark circle {
-  fill: none;
-  stroke: #33343d;
-  stroke-width: 2;
-}
-
-.postmark text {
-  fill: #33343d;
-  font-weight: 600;
-}
-
-.postmark-ring {
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-}
-
-.postmark-year {
-  font-size: 17px;
-}
-
-.postcard-title {
-  margin: 0 0 10px;
-  color: #0a0f1c;
-  font-size: clamp(19px, 1.8vw, 26px);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-
-.postcard-message {
-  margin: 0;
-  color: rgba(17, 17, 20, 0.84);
-  font-size: 14px;
-  line-height: 1.45;
-}
-
-.postcard-foot {
+.events-head {
   position: absolute;
-  right: 20px;
-  bottom: 16px;
-  left: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  top: clamp(72px, 12vh, 120px);
+  left: var(--page-gutter);
 }
 
-.postcard-place {
-  flex: 1 1 100%;
+.events-window {
+  position: absolute;
+  top: var(--rows-top);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent, #000 48px);
+}
+
+.events-heading,
+.event-title {
   margin: 0;
-  padding-bottom: 8px;
-  color: var(--soft);
-  font-size: 13px;
-  border-bottom: 1px solid #d8d1bf;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.postcard-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.events-list {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.postcard-links a {
-  display: inline-block;
-  padding: 6px 12px;
-  color: var(--ink);
-  border: 1px solid #c9c2b0;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.2s ease;
+.event-row {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: 240px;
+  padding: 24px var(--page-gutter);
+  border-top: 1px solid #eaeaea;
+  outline: none;
 }
 
-.postcard-links a:hover {
+.event-row:last-child {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.event-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: #fff;
+  opacity: 0;
+  transition: opacity 0.18s;
 }
 
-.postcard-links a:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
+.event-label {
+  position: relative;
+  width: 440px;
+  max-width: 100%;
 }
 
-/* Phones: photos on top, the written side underneath. */
-@media (max-width: 800px) {
-  .events-run {
-    height: calc(100svh + (var(--event-count, 1) - 1) * 75svh);
+.event-copy {
+  padding: 8px 0;
+  transition: opacity 0.18s, filter 0.18s;
+}
+
+.event-title {
+  margin-bottom: 8px;
+  font-size: 30px;
+}
+
+.event-copy p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.event-copy p + p {
+  margin-top: 8px;
+}
+
+.event-date {
+  opacity: 0.5;
+}
+
+.event-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.event-links a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+
+.event-links a:hover {
+  color: #1400ff;
+}
+
+.event-previews {
+  position: absolute;
+  top: 50%;
+  right: var(--page-gutter);
+  left: calc(var(--page-gutter) + 476px);
+  z-index: 20;
+  height: 190px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.event-preview {
+  --spread: max(0px, min(225px, 50% - 125px));
+  position: absolute;
+  display: block;
+  width: 250px;
+  height: 190px;
+  object-fit: cover;
+  background: #f1f0f3;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateY(64px) rotate(0) scale(0.95);
+  transition: transform 0.25s var(--ease-out), opacity 0.16s ease;
+}
+
+.event-preview-0 {
+  top: 0;
+  right: calc(2 * var(--spread));
+}
+
+.event-preview-1 {
+  top: 8px;
+  right: var(--spread);
+}
+
+.event-preview-2 {
+  top: 8px;
+  right: 0;
+}
+
+/* The row under the pointer (or keyboard focus) is the active one. */
+.event-row:is(:hover, :focus-visible, :focus-within) {
+  z-index: 10;
+}
+
+.event-row:is(:hover, :focus-visible, :focus-within)::before,
+.event-row:is(:hover, :focus-visible, :focus-within) .event-preview {
+  opacity: 1;
+}
+
+.event-row:is(:hover, :focus-visible, :focus-within) .event-preview-0 {
+  transform: translateY(0) rotate(-8deg);
+}
+
+.event-row:is(:hover, :focus-visible, :focus-within) .event-preview-1 {
+  transform: translateY(0) rotate(10deg);
+  transition-delay: 35ms;
+}
+
+.event-row:is(:hover, :focus-visible, :focus-within) .event-preview-2 {
+  transform: translateY(0) rotate(-7.2deg);
+  transition-delay: 70ms;
+}
+
+.event-row:focus-visible {
+  outline: 2px solid #7950ef;
+  outline-offset: -5px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .events-list:has(.event-row:hover) .event-row:not(:hover) .event-copy {
+    opacity: 0.35;
+    filter: blur(4px);
   }
+}
 
-  .events-pin {
-    height: 100svh;
+@media (prefers-reduced-motion: reduce) {
+  .event-preview {
+    transform: none !important;
+    transition: opacity 0.16s;
+    transition-delay: 0s !important;
+  }
+}
+
+/* Phones: title and date, a swipeable strip of the three photos, then the story. */
+@media (width <= 700px) {
+  .events {
+    padding: 24px 0 40px;
   }
 
   .events-head {
-    padding-top: 28px;
+    padding: 0 24px 24px;
   }
 
-  .events-count {
+  .events-heading {
+    font-size: 28px;
+  }
+
+  .event-title {
+    font-size: 24px;
+  }
+
+  .event-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding: 40px 0 44px;
+  }
+
+  .event-row::before {
     display: none;
   }
 
-  .postcards {
-    padding-left: 16px;
+  .event-label,
+  .event-copy {
+    display: contents;
   }
 
-  .events-view {
-    mask-image: linear-gradient(to right, transparent, #000 16px);
+  .event-copy > * {
+    padding: 0 24px;
   }
 
-  .postcard {
-    width: calc(100vw - var(--edge) - 76px);
-    height: min(calc(100svh - 130px), 540px);
+  .event-title {
+    order: 1;
+    margin-bottom: 4px;
   }
 
-  .postcard-inner {
-    grid-template-columns: 1fr;
-    grid-template-rows: 30% 1fr;
+  .event-copy .event-date {
+    order: 2;
+    margin: 0 0 20px;
   }
 
-  .postcard-photos {
-    padding: 8px;
+  .event-previews {
+    position: static;
+    order: 3;
+    display: flex;
+    gap: 8px;
+    height: auto;
+    padding: 0 24px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 24px;
+    scrollbar-width: none;
+    pointer-events: auto;
+    transform: none;
   }
 
-  .postcard-photos.is-double {
-    grid-template-rows: 1fr;
-    grid-template-columns: 1fr 1fr;
+  .event-previews::-webkit-scrollbar {
+    display: none;
   }
 
-  .postcard-back {
-    padding: 14px;
-    border-top: 1px solid #d8d1bf;
-    border-left: 0;
+  .event-preview,
+  .event-row .event-preview {
+    position: static;
+    flex: 0 0 calc(100% - 56px);
+    width: auto;
+    height: auto;
+    aspect-ratio: 250 / 190;
+    opacity: 1;
+    transform: none !important;
+    scroll-snap-align: start;
   }
 
-  .stamp {
-    width: 60px;
-    height: 74px;
-    margin-bottom: 8px;
-    border-width: 5px;
+  .event-copy .event-desc {
+    order: 4;
+    margin-top: 20px;
+    line-height: 1.38;
   }
 
-  .stamp-top {
-    font-size: 16px;
-  }
-
-  .stamp-bottom {
-    margin-top: 3px;
-    font-size: 7px;
-  }
-
-  .postmark {
-    top: 12px;
-    right: 62px;
-    width: 56px;
-    height: 56px;
-  }
-
-  .postcard-title {
-    padding-right: 34px;
-    font-size: 20px;
-  }
-
-  .postcard-foot {
-    right: 14px;
-    bottom: 12px;
-    left: 14px;
-  }
-
-  .postcard-message {
-    font-size: 14px;
-    line-height: 1.42;
+  .event-copy .event-links {
+    order: 5;
+    margin-top: 16px;
   }
 }

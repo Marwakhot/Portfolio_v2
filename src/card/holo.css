@@ -1,0 +1,478 @@
+/* The platinum holo card. The layer stack, masks and blends are the holo skill's
+   (https://design.how/vault/holo), recoloured from pink to platinum; holo-engine.js
+   writes the custom properties they read every frame. */
+.holo-host {
+  --card-w: 520px;
+  position: relative;
+  width: var(--card-w);
+  aspect-ratio: 1.55;
+  perspective: 1100px;
+  user-select: none;
+}
+.holo-card {
+  position: relative;
+  container-type: inline-size;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0deg) * var(--tilt-k, 1))) rotateY(calc(var(--ry, 0deg) * var(--tilt-k, 1)));
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--card-w, 528px) * 0.045);
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(16, 22, 40, 0.14),
+    0 18px 40px -18px rgba(16, 22, 40, 0.4);
+  will-change: transform;
+}
+.holo-card > * {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.holo-body {
+  background-image: var(--body-grad);
+}
+.holo-pattern,
+.holo-pattern--lit {
+  background-image: var(--pattern-lit);
+  background-size: 21% auto;
+  background-repeat: repeat;
+  opacity: var(--reveal, 0);
+}
+.holo-pattern {
+  background-image: var(--pattern-ink);
+  mix-blend-mode: multiply;
+  mask-image:
+    radial-gradient(
+      ellipse 82% 96% at var(--reveal-x, 50%) var(--reveal-y, 50%),
+      #000 0%,
+      rgba(0, 0, 0, 0.8) 38%,
+      transparent 76%
+    ),
+    linear-gradient(
+      var(--reveal-angle, 90deg),
+      #000 12%,
+      rgba(0, 0, 0, 0.5) 46%,
+      transparent 62%
+    );
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 82% 96% at var(--reveal-x, 50%) var(--reveal-y, 50%),
+      #000 0%,
+      rgba(0, 0, 0, 0.8) 38%,
+      transparent 76%
+    ),
+    linear-gradient(
+      var(--reveal-angle, 90deg),
+      #000 12%,
+      rgba(0, 0, 0, 0.5) 46%,
+      transparent 62%
+    );
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+.holo-pattern--lit {
+  mix-blend-mode: screen;
+  opacity: calc(var(--reveal, 0) * 0.85);
+  mask-image:
+    radial-gradient(
+      ellipse 82% 96% at var(--reveal-x, 50%) var(--reveal-y, 50%),
+      #000 0%,
+      rgba(0, 0, 0, 0.8) 38%,
+      transparent 76%
+    ),
+    linear-gradient(
+      var(--reveal-angle, 90deg),
+      transparent 38%,
+      rgba(0, 0, 0, 0.5) 54%,
+      #000 88%
+    );
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 82% 96% at var(--reveal-x, 50%) var(--reveal-y, 50%),
+      #000 0%,
+      rgba(0, 0, 0, 0.8) 38%,
+      transparent 76%
+    ),
+    linear-gradient(
+      var(--reveal-angle, 90deg),
+      transparent 38%,
+      rgba(0, 0, 0, 0.5) 54%,
+      #000 88%
+    );
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+.holo-foil,
+.holo-foil--b,
+.holo-foil--c {
+  background-repeat: repeat;
+}
+.holo-foil {
+  background-image: var(--l1-img, none);
+  background-size: var(--l1-size, 400% 400%);
+  background-position: var(--l1-x, 50%) var(--l1-y, 50%);
+  background-blend-mode: var(--l1-bgblend, normal);
+  mix-blend-mode: var(--l1-blend, overlay);
+  filter: var(--l1-filter, none);
+  opacity: calc(var(--l1-o, 0) * var(--foil-k, 1));
+}
+.holo-foil--b {
+  background-image: var(--l2-img, none);
+  background-size: var(--l2-size, 300% 300%);
+  background-position: var(--l2-x, 50%) var(--l2-y, 50%);
+  background-blend-mode: var(--l2-bgblend, normal);
+  mix-blend-mode: var(--l2-blend, overlay);
+  filter: var(--l2-filter, none);
+  opacity: calc(var(--l2-o, 0) * var(--foil-k, 1));
+}
+.holo-foil--c {
+  background-image: var(--l3-img, none);
+  background-size: var(--l3-size, 200% 200%);
+  background-position: var(--l3-x, 50%) var(--l3-y, 50%);
+  background-blend-mode: var(--l3-bgblend, normal);
+  mix-blend-mode: var(--l3-blend, overlay);
+  filter: var(--l3-filter, none);
+  opacity: calc(var(--l3-o, 0) * var(--foil-k, 1));
+}
+[data-holo-lite] .holo-foil--c {
+  opacity: calc(var(--l3-o, 0) * 0.5);
+}
+.holo-glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--gx, 50%) var(--gy, 50%),
+    hsla(0, 0%, 100%, 0.75) 10%,
+    hsla(0, 0%, 100%, 0.55) 20%,
+    hsla(0, 0%, 0%, 0.5) 120%
+  );
+  mix-blend-mode: overlay;
+  opacity: calc(var(--glare-o, 0.55) * var(--glare-k, 1) * (0.93 + var(--breath, 0.5) * 0.07));
+}
+.holo-sheen {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, calc(var(--edge-t, 0) * 0.55 + 0.1)),
+    inset 0 -1px 0 rgba(255, 255, 255, calc(var(--edge-b, 0) * 0.5 + 0.06)),
+    inset 1px 0 0 rgba(255, 255, 255, calc(var(--edge-l, 0) * 0.5 + 0.06)),
+    inset -1px 0 0 rgba(255, 255, 255, calc(var(--edge-r, 0) * 0.5 + 0.06)),
+      inset 0 -2px 4px rgba(30, 32, 40, calc(var(--edge-t, 0) * 0.09)),
+    inset 0 2px 4px rgba(30, 32, 40, calc(var(--edge-b, 0) * 0.09)),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+.holo-spot {
+  background: radial-gradient(
+    ellipse 130% 110% at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(250, 250, 255, 0.14) 38%,
+    transparent 74%
+  );
+  mix-blend-mode: soft-light;
+  opacity: calc(var(--spot, 0) * 0.55);
+}
+.holo-smear {
+  background: linear-gradient(
+    var(--smear-angle, 0deg),
+    transparent 26%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 74%
+  );
+  background-size: 260% 260%;
+  background-position: var(--gx, 50%) var(--gy, 50%);
+  mix-blend-mode: soft-light;
+  opacity: calc(var(--smear, 0) * 0.3);
+}
+.holo-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23p)' opacity='.5'/%3E%3C/svg%3E");
+  background-size: 26% auto;
+  mix-blend-mode: overlay;
+  opacity: 0.14;
+}
+.holo-tile {
+  position: absolute;
+  top: 19%;
+  right: 7%;
+  width: 22%;
+  aspect-ratio: 0.86;
+  border-radius: calc(var(--card-w, 528px) * 0.022);
+  overflow: hidden;
+  background: var(--tile-dark, #33363d);
+  box-shadow:
+    calc(var(--emboss-x, 0) * -1.5) calc(var(--emboss-y, 0) * -1.5 + 2px) 3px
+      rgba(30, 32, 40, 0.18),
+    calc(var(--emboss-x, 0) * -3) calc(var(--emboss-y, 0) * -3 + 8px) 18px -8px
+      rgba(30, 32, 40, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transform: translate(
+    calc(var(--emboss-x, 0) * -1.1),
+    calc(var(--emboss-y, 0) * -1.1)
+  );
+}
+.holo-tile > * {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.holo-tile__photo,
+.holo-tile__photo--neg {
+  background-image: var(--tile-src);
+  background-repeat: no-repeat;
+  background-size: 132%;
+  background-position: var(--tile-x, 50%) 32%;
+}
+.holo-tile__photo {
+  filter: grayscale(1) contrast(1.18) brightness(1.16);
+}
+.holo-tile__photo--neg {
+  filter: grayscale(1) contrast(1.42) brightness(0.92) invert(1)
+    sepia(0.55) hue-rotate(var(--tile-hue, 190deg)) saturate(2.1);
+  mask-image: linear-gradient(
+    var(--tile-sweep-angle, 90deg),
+    rgba(0, 0, 0, 1) calc(var(--tile-invert, 0) * 210% - 78%),
+    rgba(0, 0, 0, 0.98) calc(var(--tile-invert, 0) * 210% - 64%),
+    rgba(0, 0, 0, 0.91) calc(var(--tile-invert, 0) * 210% - 50%),
+    rgba(0, 0, 0, 0.75) calc(var(--tile-invert, 0) * 210% - 36%),
+    rgba(0, 0, 0, 0.5) calc(var(--tile-invert, 0) * 210% - 22%),
+    rgba(0, 0, 0, 0.25) calc(var(--tile-invert, 0) * 210% - 8%),
+    rgba(0, 0, 0, 0.09) calc(var(--tile-invert, 0) * 210% + 6%),
+    rgba(0, 0, 0, 0.02) calc(var(--tile-invert, 0) * 210% + 20%),
+    transparent calc(var(--tile-invert, 0) * 210% + 34%)
+  );
+  -webkit-mask-image: linear-gradient(
+    var(--tile-sweep-angle, 90deg),
+    rgba(0, 0, 0, 1) calc(var(--tile-invert, 0) * 210% - 78%),
+    rgba(0, 0, 0, 0.98) calc(var(--tile-invert, 0) * 210% - 64%),
+    rgba(0, 0, 0, 0.91) calc(var(--tile-invert, 0) * 210% - 50%),
+    rgba(0, 0, 0, 0.75) calc(var(--tile-invert, 0) * 210% - 36%),
+    rgba(0, 0, 0, 0.5) calc(var(--tile-invert, 0) * 210% - 22%),
+    rgba(0, 0, 0, 0.25) calc(var(--tile-invert, 0) * 210% - 8%),
+    rgba(0, 0, 0, 0.09) calc(var(--tile-invert, 0) * 210% + 6%),
+    rgba(0, 0, 0, 0.02) calc(var(--tile-invert, 0) * 210% + 20%),
+    transparent calc(var(--tile-invert, 0) * 210% + 34%)
+  );
+  opacity: 0.94;
+}
+.holo-tile__grain {
+  background-image:
+    repeating-linear-gradient(
+      63deg,
+      rgba(255, 255, 255, 0.16) 0px,
+      rgba(255, 255, 255, 0) 1px,
+      rgba(0, 0, 0, 0.13) 2px,
+      rgba(255, 255, 255, 0) 3px
+    ),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23g)' opacity='.55'/%3E%3C/svg%3E");
+  background-size:
+    auto,
+    42% auto;
+  mix-blend-mode: overlay;
+  opacity: 0.34;
+}
+.holo-tile__wear {
+  background-image: repeating-linear-gradient(
+    28deg,
+    transparent 0px,
+    transparent 9px,
+    rgba(255, 255, 255, 0.09) 9px,
+    rgba(255, 255, 255, 0.09) 10px,
+    transparent 10px,
+    transparent 23px,
+    rgba(255, 255, 255, 0.05) 23px,
+    rgba(255, 255, 255, 0.05) 24px,
+    transparent 24px,
+    transparent 51px
+  );
+  mix-blend-mode: soft-light;
+  opacity: calc(0.28 + var(--tile-invert, 0) * 0.4);
+}
+.holo-tile__vignette {
+  background: radial-gradient(
+    ellipse 78% 74% at 50% 42%,
+    transparent 40%,
+    rgba(20, 22, 28, 0.16) 78%,
+    rgba(20, 22, 28, 0.34) 100%
+  );
+}
+.holo-tile__duo {
+  background-image: linear-gradient(
+    160deg,
+    var(--tile-dark, #d81f6a),
+    var(--tile-light, #6bb8dd)
+  );
+  mix-blend-mode: color;
+}
+.holo-tile__tone {
+  background-image: linear-gradient(
+    160deg,
+    var(--tile-dark, #d81f6a),
+    var(--tile-light, #6bb8dd)
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.9;
+}
+.holo-tile__foil {
+  background-image: repeating-linear-gradient(
+    98deg,
+    hsl(2, 100%, 76%) 0%,
+    hsl(53, 100%, 72%) 3%,
+    hsl(93, 100%, 72%) 6%,
+    hsl(176, 100%, 78%) 9%,
+    hsl(228, 100%, 77%) 12%,
+    hsl(283, 100%, 76%) 15%,
+    hsl(2, 100%, 76%) 18%
+  );
+  background-size: 300% 300%;
+  background-position: var(--tile-x, 50%) calc(var(--tile-invert, 0) * 100%);
+  mix-blend-mode: color-dodge;
+  filter: contrast(1.7) saturate(0.85);
+  opacity: calc(var(--tile-invert, 0) * 0.5);
+}
+.holo-tile__gloss {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(20, 22, 28, 0.16) 110%
+  );
+  mix-blend-mode: soft-light;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+  border-radius: inherit;
+}
+@media (prefers-reduced-motion: reduce) {
+  .holo-card {
+    transform: none;
+  }
+}
+
+/* Brushed metal: fine horizontal hairlines over the silver. */
+.holo-body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.28) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 2px);
+  mix-blend-mode: overlay;
+}
+
+/* The printed face: tier and mark, chip, number, holder. Sized from the card's width. */
+.holo-content {
+  z-index: 2;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6.5% 7% 6%;
+  color: var(--ink, #2b2e35);
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  container-type: inline-size;
+}
+
+.holo-content p {
+  margin: 0;
+}
+
+.pc-top,
+.pc-bottom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.pc-tier {
+  font-size: 2.6cqw;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+.pc-mark {
+  font-size: 3.4cqw;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  opacity: 0.7;
+}
+
+.pc-chips {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  margin-top: 4%;
+}
+
+/* A gold contact chip, drawn. */
+.pc-chip {
+  position: relative;
+  width: 11cqw;
+  aspect-ratio: 1.3;
+  background: linear-gradient(135deg, #e8cf8a, #c9a24e 45%, #f1dc9c 60%, #b88f3c);
+  border-radius: 1.6cqw;
+  box-shadow: inset 0 0 0 1px rgba(110, 80, 20, 0.35);
+  overflow: hidden;
+}
+
+.pc-chip::before,
+.pc-chip::after {
+  content: '';
+  position: absolute;
+  inset: 30% -1px;
+  border-top: 1px solid rgba(110, 80, 20, 0.45);
+  border-bottom: 1px solid rgba(110, 80, 20, 0.45);
+}
+
+.pc-chip::after {
+  inset: -1px 38%;
+  border: 0;
+  border-left: 1px solid rgba(110, 80, 20, 0.45);
+  border-right: 1px solid rgba(110, 80, 20, 0.45);
+}
+
+.pc-wave {
+  width: 5cqw;
+  height: 5cqw;
+  opacity: 0.6;
+}
+
+.pc-number {
+  font-size: 5.2cqw;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  text-shadow:
+    var(--emboss-x, 0) var(--emboss-y, 0) 0 var(--ink-lift, rgba(255, 255, 255, 0.55)),
+    calc(var(--emboss-x, 0) * -1) calc(var(--emboss-y, 0) * -1) 1px rgba(30, 32, 40, 0.25);
+}
+
+.pc-bottom {
+  align-items: flex-end;
+}
+
+.pc-holder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6cqw;
+}
+
+.pc-small {
+  font-size: 1.9cqw;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.pc-name {
+  font-size: 3.2cqw;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 var(--ink-lift, rgba(255, 255, 255, 0.5));
+}
+
+.pc-brand {
+  font-size: 4.4cqw;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  opacity: 0.72;
+}

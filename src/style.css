@@ -1,16 +1,11 @@
 :root {
   --page-gutter: clamp(32px, 8vw, 128px);
   --edge: clamp(24px, 5vw, 72px);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   color: #080808;
-  background: #fff;
+  background: #fafafa;
   font-family: 'Geist Variable', system-ui, sans-serif;
   font-synthesis: none;
-}
-
-/* Nothing scrolls until the visitor has boarded. */
-html.is-boarding,
-html.is-boarding body {
-  overflow: hidden;
 }
 
 * {
@@ -19,9 +14,25 @@ html.is-boarding body {
 
 body,
 h1,
+h2,
+h3,
 p {
   margin: 0;
   font-weight: inherit;
+}
+
+body {
+  background: #fafafa;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid #7950ef;
+  outline-offset: 8px;
 }
 
 ::selection {
@@ -36,24 +47,15 @@ p {
   background: #fff;
 }
 
-/* Small serif text either side of the card: the line on the left, class and links on the right. */
-.hero-line,
+/* Small serif text at the top right: class and links. */
 .hero-side {
   position: absolute;
-  top: clamp(72px, 13vh, 124px);
+  top: 100px;
   z-index: 3;
-  color: #111114;
   font-family: 'Young Serif', Georgia, serif;
-  font-size: clamp(15px, 1.15vw, 20px);
-  line-height: 1.35;
-}
-
-.hero-line {
-  left: var(--page-gutter);
-  width: min(30vw, 460px);
-  font-size: clamp(20px, 1.75vw, 30px);
+  font-size: 16px;
   line-height: 1.25;
-  pointer-events: none;
+  letter-spacing: -0.02em;
 }
 
 .hero-side {
@@ -74,7 +76,7 @@ p {
   text-decoration: underline;
   text-decoration-color: #b5b3bb;
   text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
   transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
 
@@ -90,44 +92,24 @@ p {
 }
 
 
-/* One heavy serif line across the whole page, with the card hanging in front of it.
-   The exact size is set in main.js so it always fits the screen. */
+/* The name, in serif on the right, beside the card on the left. */
 h1 {
   position: absolute;
-  bottom: 3vw;
-  left: 50%;
-  color: #0a0a0a;
+  top: 52%;
+  right: var(--page-gutter);
   font-family: 'Young Serif', Georgia, serif;
-  font-size: 16vw;
+  font-size: clamp(56px, 7.4vw, 132px);
   font-weight: 400;
-  line-height: 1;
+  line-height: 0.98;
   letter-spacing: -0.02em;
+  text-align: right;
   white-space: nowrap;
-  transform: translateX(-50%);
+  transform: translateY(-50%);
 }
 
-.badge {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-
-.badge canvas {
+h1 .first,
+h1 .last {
   display: block;
-  width: 100%;
-  height: 100%;
-  touch-action: pan-y;
-}
-
-/* Shown only if WebGL can't start. */
-.badge .fallback {
-  position: absolute;
-  top: 32vh;
-  left: 70%;
-  height: 50vh;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  transform: translateX(-50%);
 }
 
 @media (width <= 700px) {
@@ -165,36 +147,14 @@ h1 {
 
   h1 {
     position: relative;
-    bottom: auto;
-    left: auto;
+    top: auto;
+    right: auto;
     z-index: 1;
+    font-size: 15vw;
+    text-align: left;
     flex: none;
     align-self: flex-start;
     margin-top: auto;
     transform: none;
   }
-}
-
-/* A tiny stop on the flight line, beside the headings below the timeline. */
-.way-row {
-  position: relative;
-}
-
-.way-dot {
-  position: absolute;
-  top: 50%;
-  left: calc(-56px + 7.5px);
-  z-index: 4;
-  width: 9px;
-  height: 9px;
-  background: #fff;
-  border: 1px solid #c3c1c1;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.way-dot.is-lit {
-  background: #3a53ed;
-  border-color: #3a53ed;
 }

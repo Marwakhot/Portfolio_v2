@@ -1,0 +1,257 @@
+/* Hackathons and events: a heading beside the small card, and a row of frosted glass cards that
+   steps sideways as you scroll. */
+.ev {
+  --ev-top: clamp(72px, 12vh, 120px);
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Sits just right of the small card (journey.js places the card at the same height). */
+.ev-heading {
+  position: absolute;
+  top: var(--ev-top);
+  left: calc(var(--page-gutter) + 112px);
+  margin: 0;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.ev-count {
+  position: absolute;
+  top: calc(var(--ev-top) + 14px);
+  right: var(--page-gutter);
+  margin: 0;
+  color: #77747f;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.ev-view {
+  position: absolute;
+  top: calc(var(--ev-top) + 120px);
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--page-gutter);
+}
+
+.ev-track {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  height: min(450px, 100%);
+  will-change: transform;
+}
+
+/* A frosted glass card over a soft glow of the event's colour, so the glass has something to
+   show through it. */
+.ev-card {
+  --event: #1400ff;
+  position: relative;
+  isolation: isolate;
+  flex: none;
+  width: min(calc(100vw - 2 * var(--page-gutter)), 760px);
+  aspect-ratio: 1.7;
+  max-height: 100%;
+}
+
+.ev-card::before {
+  content: '';
+  position: absolute;
+  inset: 8% 10%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 25% 40%, color-mix(in srgb, var(--event) 55%, transparent), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(15, 31, 69, 0.35), transparent 60%);
+  filter: blur(50px);
+  opacity: 0.55;
+}
+
+.ev-paper {
+  display: grid;
+  grid-template-columns: 45% 1fr;
+  gap: 26px;
+  height: 100%;
+  padding: 12px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(20, 22, 30, 0.04),
+    0 30px 60px -36px rgba(20, 22, 30, 0.35);
+  backdrop-filter: blur(22px) saturate(1.4);
+}
+
+/* The photos: one fills the side, two are stacked. */
+.ev-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.ev-img {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
+  border-radius: 10px;
+}
+
+.ev-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 14px 6px 0;
+}
+
+.ev-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* The placing, as a small tinted pill. */
+.ev-badge {
+  padding: 4px 11px 5px;
+  color: var(--event);
+  font-size: 12px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--event) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--event) 25%, transparent);
+  border-radius: 999px;
+}
+
+.ev-title {
+  margin: 0;
+  color: #12131a;
+  font-size: clamp(19px, 1.7vw, 25px);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.ev-desc {
+  margin: 14px 0 0;
+  color: #3a3944;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.ev-foot {
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.ev-where {
+  margin: 0;
+  padding-bottom: 10px;
+  color: #5b5864;
+  font-size: 13.5px;
+  border-bottom: 1px solid rgba(15, 31, 69, 0.1);
+}
+
+.ev-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.ev-link {
+  padding: 6px 13px 7px;
+  color: #12131a;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(15, 31, 69, 0.14);
+  border-radius: 999px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.ev-link:hover {
+  color: #fff;
+  background: var(--event);
+  border-color: var(--event);
+}
+
+.ev-link:focus-visible {
+  outline: 2px solid #7950ef;
+  outline-offset: 2px;
+}
+
+/* Phones: a smaller heading, and each card stacked: photos side by side on top, then the story. */
+@media (width <= 700px) {
+  .ev {
+    --ev-top: 84px;
+  }
+
+  .ev-heading {
+    left: calc(var(--page-gutter) + 68px);
+    font-size: 24px;
+  }
+
+  .ev-count {
+    top: calc(var(--ev-top) + 40px);
+    font-size: 13px;
+  }
+
+  .ev-view {
+    top: calc(var(--ev-top) + 76px);
+    bottom: 24px;
+    align-items: flex-start;
+  }
+
+  .ev-track {
+    gap: 20px;
+    height: auto;
+    align-items: flex-start;
+  }
+
+  .ev-card {
+    width: calc(100vw - 2 * var(--page-gutter));
+    aspect-ratio: auto;
+    max-height: none;
+  }
+
+  .ev-paper {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .ev-photos {
+    flex-direction: row;
+    height: 150px;
+  }
+
+  .ev-img {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .ev-text {
+    padding: 0 6px 6px;
+  }
+
+  .ev-title {
+    font-size: 20px;
+  }
+
+  .ev-desc {
+    font-size: 13.5px;
+  }
+}

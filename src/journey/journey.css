@@ -1,531 +1,396 @@
+/* Experience: the platinum card, its see-through layers, and each job's story. journey.js
+   places everything. */
 .journey {
-  --folio-bg: #fff;
-  --folio-sans: 'Geist Variable', system-ui, sans-serif;
-  --folio-mono: 'Geist Variable', system-ui, sans-serif;
-  --folio-blue: #3a53ed;
-  --path-blue-rgb: 44, 111, 255;
-  --path-blue: rgb(var(--path-blue-rgb));
-  --folio-mute: #9b9b9b;
-  --folio-ink: #060606;
-  --folio-body: #434445;
-  --folio-rule: #cbc9d6;
-  --ink-title: #313030;
-  --ink-desc: #666;
-  --tl-dot-line: #c3c1c1;
-  --tl-dot-fill: #b4b2b2;
-  --tl-route: #b0aeae;
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --edge: clamp(24px, 5vw, 72px);
-  --line-y: 44px; /* how far below the top of the timeline the flight line runs */
-  --stop-width: clamp(290px, 27vw, 400px);
   position: relative;
-  color: #17160f;
-  background: var(--folio-bg);
-  font-family: var(--folio-sans);
+  height: calc(var(--run, 9) * 100vh);
 }
 
 .journey[hidden] {
   display: none;
 }
 
-.journey ol,
-.journey ul {
+/* Fixed over the first screen and this section; journey.js slides it away at the end. */
+.exp-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.exp-heading {
+  position: absolute;
+  top: clamp(72px, 12vh, 120px);
+  left: var(--page-gutter);
   margin: 0;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  opacity: 0;
+}
+
+/* Everything in the diagram moves together when the view zooms in. */
+.exp-camera {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+}
+
+.exp-labels,
+.exp-details {
+  position: absolute;
+  inset: 0;
+}
+
+.exp-card,
+.exp-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 50% 50%;
+}
+
+.exp-card {
+  z-index: 1;
+}
+
+/* The card drops in when the page opens. */
+.card-drop {
+  width: 100%;
+  height: 100%;
+  animation: card-drop 1s var(--ease-out) both;
+}
+
+@keyframes card-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-48px) scale(0.97);
+  }
+}
+
+/* A job's card: the company's colour, its logo, and the position held. */
+.exp-pane {
+  --brand: #2b2e35;
+  overflow: hidden;
+  color: #fff;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0.12) 62%, rgba(255, 255, 255, 0) 100%),
+    var(--fill, linear-gradient(135deg, color-mix(in srgb, var(--brand) 82%, #fff) 0%, var(--brand) 45%, color-mix(in srgb, var(--brand) 70%, #000) 100%));
+  border-radius: 4.5% / 7%;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 30px 60px -36px rgba(20, 22, 30, 0.45);
+  visibility: hidden;
+}
+
+.pane-face {
+  position: absolute;
+  inset: 0;
+  color: #fff;
+}
+
+.exp-pane .pc-tier {
+  max-width: 58%;
+  opacity: 0.85;
+}
+
+/* The position held, where the card number would be. */
+.exp-pane .pc-number {
+  max-width: 60%;
+  font-size: 7cqw;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  white-space: normal;
+  text-shadow: none;
+}
+
+.exp-pane .pc-name {
+  text-shadow: none;
+}
+
+.exp-pane .pc-brand {
+  font-size: 2.4cqw;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* The company logo, big, straight on the card. */
+.pane-tile {
+  position: absolute;
+  top: 12%;
+  right: 6%;
+  width: 30%;
+  aspect-ratio: 1;
+}
+
+.pane-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 18%; /* the logo files are squares with their own backgrounds */
+  box-shadow: 0 0 0 max(1px, 0.3cqw) rgba(255, 255, 255, 0.9); /* a thin white edge */
+}
+
+.pane-tile.no-edge img {
+  box-shadow: none;
+}
+
+/* A label sits right of its layer, at the end of a line from it. */
+.exp-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.exp-label-line {
+  position: absolute;
+  left: 0;
+  width: var(--line, 80px);
+  height: 1px;
+  background: #d6d4dc;
+}
+
+.exp-label-text {
+  position: absolute;
+  left: calc(var(--line, 80px) + 12px);
+  color: #2b2a30;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  transform: translateY(-50%);
+}
+
+/* The job in view, on the right. */
+.exp-detail {
+  --center: -50%;
+  position: absolute;
+  top: 50%;
+  left: 55vw;
+  width: min(36vw, 500px);
+  visibility: hidden;
+  pointer-events: auto;
+}
+
+.exp-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.exp-count {
+  color: #77747f;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.exp-now {
+  padding: 2px 8px 3px;
+  color: #1400ff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(20, 0, 255, 0.08);
+  border-radius: 999px;
+}
+
+.exp-role {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.exp-company {
+  margin: 6px 0 0;
+  color: #77747f;
+  font-size: 14px;
+}
+
+.exp-desc,
+.exp-built {
+  margin: 16px 0 0;
+  color: #47454f;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.exp-built {
+  padding-left: 18px;
+}
+
+.exp-built li + li {
+  margin-top: 6px;
+}
+
+.exp-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.journey-pin {
-  display: block;
-}
-
-/* Name block on the left, intro in the centre */
-.journey-top {
-  position: relative;
-  flex: none;
-  padding: clamp(140px, 26vh, 260px) var(--edge) 0;
-}
-
-.folio-sticky {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-}
-
-.fs-rail {
-  flex-shrink: 0;
-  align-self: stretch;
-  width: 8px;
-  background-image: radial-gradient(circle at 0.8px 0.8px, var(--folio-rule) 0.8px, transparent 0.9px);
-  background-size: 3.2px 3.6px;
-}
-
-.fs-lines {
-  padding: 12px 0;
-  color: var(--folio-mute);
-  font-family: var(--folio-mono);
+.exp-skills li {
+  padding: 3px 10px 4px;
+  color: #47454f;
   font-size: 12px;
-  font-weight: 500;
-  line-height: 1.8;
-  letter-spacing: 1.84px;
-  text-transform: uppercase;
-  white-space: nowrap;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 999px;
 }
 
-.fs-name {
-  color: var(--folio-ink);
-}
-
-.folio-intro {
-  --reveal-opacity: 0.8;
-  max-width: 460px;
-  padding-top: 28px;
-}
-
-.folio-tagline {
-  color: var(--folio-ink);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.8;
-  letter-spacing: -0.12px;
-}
-
-.folio-sub {
-  color: var(--folio-body);
-  font-size: 16px;
-  line-height: 1.6;
-  letter-spacing: -0.12px;
-  opacity: 0.8;
-}
-
-/* The timeline runs down the left; the ID card hangs beside it on the right. */
-.journey-stage {
-  padding-top: clamp(64px, 12vh, 120px);
-}
-
-.folio-track {
-  position: relative;
-  z-index: 3; /* above the card's canvas, so these links stay clickable */
-  width: min(54vw, 720px);
-  margin-left: var(--edge);
-  padding-left: 56px;
-}
-
-.plan-label {
-  position: absolute;
-  top: -26px;
-  left: 0;
-  color: var(--folio-blue);
-  font-family: var(--folio-mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.76px;
-  text-transform: uppercase;
-}
-
-.flight-line {
-  --head: 0px;
-  position: absolute;
-  top: 0;
-  left: 7px;
-  width: 1px;
-  background-image: linear-gradient(to bottom, var(--folio-rule) 0 2px, transparent 2px 5.5px);
-  background-size: 1px 5.5px;
-}
-
-.flight-lit {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: var(--head);
-  background: var(--path-blue);
-  box-shadow:
-    0 0 4px rgba(var(--path-blue-rgb), 0.2),
-    0 0 10px rgba(var(--path-blue-rgb), 0.2);
-}
-
-/* The plane points up in its drawing, so it's turned to fly down the line. */
-.plan-plane {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  display: block;
-  width: 18px;
-  height: 17px;
-  color: var(--folio-blue);
-  transform: translate(-8.5px, calc(var(--head) - 8.5px)) rotate(180deg);
-}
-
-/* Each job gets most of a screen, so the card has time to show it. */
-.tl-entry {
-  position: relative;
-  min-height: 80vh;
-}
-
-.tl-entry:nth-child(1) {
-  margin-bottom: 32px;
-}
-
-.tl-entry:nth-child(2),
-.tl-entry:nth-child(3) {
-  min-height: 26vh;
-}
-
-.tl-entry:nth-child(4) {
-  min-height: 30vh;
-}
-
-.tl-entry > .tl-year,
-.tl-entry > .tl-body {
-  opacity: 0.3;
-  transition: opacity 0.4s var(--ease-out);
-}
-
-.tl-entry.is-active > .tl-year,
-.tl-entry.is-active > .tl-body {
-  opacity: 1;
-}
-
-.tl-entry:nth-child(1) {
-  --reveal-delay: 0.12s;
-}
-
-.tl-entry:nth-child(2) {
-  --reveal-delay: 0.18s;
-}
-
-.tl-entry:nth-child(3) {
-  --reveal-delay: 0.24s;
-}
-
-.tl-entry:nth-child(n + 4) {
-  --reveal-delay: 0.3s;
-}
-
-.reveal,
-.tl-entry {
-  animation: itemReveal 0.4s var(--ease-out) both;
-  animation-delay: var(--reveal-delay, 0ms);
-}
-
-.tl-year {
+.exp-gallery {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-family: var(--folio-mono);
-  font-weight: 500;
-  text-transform: uppercase;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.tl-yearnum {
-  color: var(--folio-mute);
-  font-size: 12px;
-  line-height: 14px;
-  letter-spacing: 1.05px;
-}
-
-.tl-dot {
-  position: absolute;
-  top: 7px;
-  left: -49px; /* onto the flight line, which sits 7px into the track's 56px padding */
-  z-index: 1;
-  width: 13px;
-  height: 13px;
-  background: var(--folio-bg);
-  border: 1px solid var(--tl-dot-line);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: border-color 0.3s var(--ease-out);
-}
-
-.tl-dot::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  background: var(--tl-dot-fill);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: background-color 0.3s var(--ease-out);
-}
-
-.tl-dot::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  height: 100%;
-  border: 1px solid var(--folio-blue);
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.tl-dot.is-lit {
-  border-color: var(--folio-blue);
-}
-
-.tl-dot.is-lit::after {
-  background: var(--folio-blue);
-}
-
-.tl-dot.is-lit::before {
-  animation: dotPulse 0.72s var(--ease-out);
-}
-
-.tl-body {
-  padding-top: 10px;
-}
-
-.tl-gallery {
-  display: flex;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.tl-gallery img {
+.exp-gallery img {
   display: block;
-  width: min(30%, 150px);
+  width: min(28%, 120px);
   aspect-ratio: 591 / 1280;
   object-fit: cover;
-  border-radius: 16px;
-  box-shadow: 0 8px 20px rgba(17, 17, 20, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
 }
 
-.tl-gallery img.is-wide {
-  width: min(48%, 300px);
+.exp-gallery img.is-wide {
+  width: min(48%, 230px);
   aspect-ratio: 728 / 427;
-  border-radius: 10px;
-}
-
-.tl-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2px 10px;
-}
-
-.tl-head:has(.tl-logo) {
-  flex-wrap: nowrap;
-}
-
-.tl-logo {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  object-fit: cover;
-  border: 1px solid #e7e5e5;
-  border-radius: 9px;
-}
-
-.tl-badge {
-  flex: none;
-}
-
-.tl-company {
-  min-width: 0;
-  color: var(--folio-ink);
-  font-size: 26px;
-  font-weight: 500;
-  line-height: 1.3;
-  letter-spacing: -0.4px;
-  text-decoration: none;
-}
-
-a.tl-company:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.tl-badge {
-  padding-top: 3px;
-  color: var(--folio-blue);
-  font-family: var(--folio-mono);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 0.99;
-  letter-spacing: 0.96px;
-  text-transform: uppercase;
-}
-
-.tl-role {
-  margin-bottom: 8px;
-  color: var(--folio-body);
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: -0.12px;
-}
-
-.tl-desc {
-  color: var(--folio-body);
-  font-size: 16px;
-  line-height: 1.6;
-  letter-spacing: -0.12px;
-  opacity: 0.8;
-}
-
-.journey .tl-built {
-  margin-top: 10px;
-  padding-left: 18px;
-  color: var(--folio-body);
-  font-size: 15px;
-  line-height: 1.5;
-  letter-spacing: -0.12px;
-  list-style: disc;
-}
-
-.tl-built li + li {
-  margin-top: 6px;
-}
-
-.folio-outro {
-  padding-bottom: 35vh;
-}
-
-.outro-sub {
-  color: var(--folio-body);
-  font-size: 14px;
-  line-height: 1.6;
-  letter-spacing: -0.12px;
-  opacity: 0.8;
-}
-
-@keyframes itemReveal {
-  from {
-    opacity: 0;
-    filter: blur(8px);
-    transform: translateY(-12px) scale(0.985);
-  }
-  to {
-    opacity: var(--reveal-opacity, 1);
-    filter: blur(0);
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes itemRevealReduced {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: var(--reveal-opacity, 1);
-  }
-}
-
-@keyframes dotPulse {
-  from {
-    opacity: 0.45;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(2.4);
-  }
+  border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .tl-entry {
-    animation: itemRevealReduced 0.2s var(--ease-out) both;
-    animation-delay: 0ms;
-  }
-
-  .tl-dot.is-lit::before {
+  .card-drop {
     animation: none;
   }
 }
 
-/* No room beside the intro: the name block sits above it. */
-@media (max-width: 1100px) {
-  .folio-sticky {
-    position: static;
-    justify-content: center;
-    gap: 0;
+/* Phones: the diagram up top, the story below it. */
+@media (width <= 700px) {
+  .exp-heading {
+    top: 80px;
+    left: 24px;
+    font-size: 28px;
   }
 
-  .fs-rail {
-    display: none;
-  }
-
-  .fs-lines {
-    padding: 0;
-    text-align: center;
-  }
-}
-
-@media (max-width: 760px) {
-  .wide-only {
-    display: none;
-  }
-
-  .journey-top {
-    padding-top: 28px;
-  }
-
-  .fs-lines {
-    font-size: 11px;
-    line-height: 1.6;
-  }
-
-  .folio-tagline,
-  .folio-sub {
-    font-size: 15px;
-  }
-
-  .journey {
-    --stop-width: min(76vw, 320px);
-  }
-
-  .plan-label {
-    width: 72px;
-  }
-}
-
-/* The card stays on the first screen here, so the timeline gets the full width. */
-@media (max-width: 700px) {
-  .folio-track {
+  .exp-detail {
+    --center: 0%;
+    top: 48%;
+    right: 0;
+    bottom: 0;
+    left: 0;
     width: auto;
-    margin-right: var(--edge);
+    padding: 28px 24px 24px;
+    background: linear-gradient(to bottom, rgba(250, 250, 250, 0), #fafafa 28px);
   }
 
-  .tl-entry:nth-child(n) {
-    min-height: 0;
-    margin-bottom: 48px;
-  }
-
-  .tl-company {
+  .exp-role {
     font-size: 21px;
   }
 
-  .tl-head:has(.tl-logo) {
-    flex-wrap: wrap;
+  .exp-desc,
+  .exp-built {
+    font-size: 13.5px;
   }
 
-  .tl-head:has(.tl-logo) .tl-company {
-    flex: 1 1 calc(100% - 46px);
+  .exp-gallery img {
+    width: 64px;
+    border-radius: 10px;
   }
 
-  .tl-head:has(.tl-logo) .tl-badge {
-    margin-left: 46px;
-  }
-
-  .folio-outro {
-    padding-bottom: 12vh;
+  .exp-gallery img.is-wide {
+    width: 130px;
   }
 }
 
-.folio-heading {
-  margin: 0;
-  color: var(--folio-ink);
-  font-size: clamp(30px, 3.6vw, 52px);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
+/* An unmoving frame round the camera: the reveal round the chip is cut from it. */
+.exp-lens {
+  position: absolute;
+  inset: 0;
+}
+
+/* Progress along the story: a thin line across the very top. */
+.exp-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #1400ff;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  opacity: 0;
+}
+
+/* The four parts of the story, top right; each jumps there. */
+.exp-nav {
+  position: absolute;
+  top: 22px;
+  right: var(--page-gutter);
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(20, 22, 30, 0.08);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px -16px rgba(20, 22, 30, 0.35);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+}
+
+.exp-nav-item {
+  padding: 6px 12px 7px;
+  color: #77747f;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.exp-nav-item:hover {
+  color: #12131a;
+}
+
+.exp-nav-item.is-on {
+  color: #fff;
+  background: #12131a;
+}
+
+.exp-nav-item:focus-visible {
+  outline: 2px solid #7950ef;
+  outline-offset: 2px;
+}
+
+/* Phones: the parts bar spans the top, centred. */
+@media (width <= 700px) {
+  .exp-nav {
+    top: 14px;
+    right: 50%;
+    translate: 50% 0;
+  }
+
+  .exp-nav-item {
+    padding: 6px 10px 7px;
+    font-size: 12.5px;
+  }
 }

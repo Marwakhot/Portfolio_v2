@@ -1,12 +1,8 @@
+/* Projects: a pinboard of cards, filtered by the coloured pills in the sentence above. */
 .projects {
-  --ink: #060606;
-  --soft: #6b6b70;
-  --face: #f4f4f5;
-  --hardware: #c3c6cb;
-  --move: 0.7s cubic-bezier(0.3, 1.05, 0.4, 1);
   position: relative;
-  padding-bottom: 120px;
-  color: var(--ink);
+  padding: 56px var(--page-gutter) 32px;
+  overflow: clip;
   background: #fff;
 }
 
@@ -14,308 +10,453 @@
   display: none;
 }
 
-.projects ol {
-  margin: 0;
+.projects-head {
+  position: relative;
+  z-index: 30;
+  width: 440px;
+  max-width: 100%;
+  pointer-events: none;
+}
+
+.projects-title {
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.projects-lead {
+  font-size: 16px;
+  line-height: 1.65;
+  letter-spacing: -0.02em;
+}
+
+/* Filter pills, and the matching pill in the open card. */
+.pcategory {
+  position: relative;
+  display: inline-block;
+  margin: -4px -3px;
+  padding: 4px 3px;
+  color: inherit;
+  font: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+}
+
+.ppill {
+  display: inline-block;
+  padding: 1px 9px 2px;
+  color: #fff;
+  border-radius: 999px;
+  transform-origin: 50%;
+  transition: transform 0.18s var(--ease-out), opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.ppill.blue { background: #1400ff; }
+.ppill.orange { background: #f3742b; }
+.ppill.pink { background: #ec3293; }
+.ppill.black { background: #000; }
+
+.pcategory.off .ppill {
+  opacity: 0.4;
+}
+
+.pcategory:focus-visible {
+  outline: 2px solid #7950ef;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pcategory:hover .ppill {
+    transform: scale(0.95) rotate(-1deg);
+  }
+
+  .pcategory:hover:active .ppill {
+    transform: scale(0.92) rotate(-1deg);
+  }
+}
+
+.pcategory:active .ppill {
+  transform: scale(0.92);
+}
+
+/* The board: cards are placed by projects.js. */
+.pboard {
+  position: relative;
+  height: var(--board-height, 680px);
+  margin: -110px 0 0;
   padding: 0;
   list-style: none;
 }
 
-.projects-head {
-  padding: clamp(96px, 16vh, 160px) var(--edge) 72px calc(var(--edge) + 56px);
-}
-
-.projects-title {
-  margin: 0;
-  font-size: clamp(30px, 3.6vw, 52px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-
-.projects-intro {
-  margin-top: 18px;
-  color: var(--soft);
-  font-size: 16px;
-}
-
-.prail {
-  position: relative;
-  width: min(calc(100vw - var(--edge) * 2 - 72px), 1240px);
-  margin: 0 auto;
-  transition: height var(--move);
-}
-
-/* The hanger and ticket move together, swinging from the point on the chain. */
-.phang {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transform-origin: 50% 0;
-  transition:
-    transform var(--move),
-    width var(--move);
+@property --lift {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
 }
 
 .pcard {
-  position: relative;
-  width: 100%;
-  overflow: clip; /* unlike hidden, this leaves the Back button free to stick while scrolling */
-  background: var(--face);
-  border-radius: 22px;
-  box-shadow: 0 10px 28px rgba(17, 17, 20, 0.07);
-  transition: height var(--move);
-}
-
-/* The shimmer: a soft rainbow that follows the pointer, on closed cards only. */
-.pcard::after {
-  content: '';
+  --pin: #1400ff;
+  --lift: 0;
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.75), transparent 45%),
-    conic-gradient(from 210deg at var(--mx, 50%) var(--my, 50%), #ffb3d9, #b8c9ff, #a8f0dc, #fff2a8, #ffb3d9);
-  mix-blend-mode: soft-light;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  width: 250px;
+  transform-origin: 50% 12px; /* turns around its pin */
+  user-select: none;
+  transition: filter 0.3s, --lift 0.24s var(--ease-out);
 }
 
-.phang:not(.is-open) .pcard:hover::after {
-  opacity: 1;
+.pcard.pin-orange { --pin: #f3742b; }
+.pcard.pin-pink { --pin: #ec3293; }
+.pcard.pin-black { --pin: #2a2a30; }
+
+.pcard.is-lifted {
+  --lift: 1;
 }
 
-/* The closed card. */
-.pcover {
-  position: absolute;
-  inset: 0;
+/* Cards tucked away while another field is picked. */
+.pcard.aside {
+  filter: saturate(0.3) contrast(0.25) brightness(1.75) blur(1px);
+}
+
+/* The card that's open is shown in the big view instead. */
+.pcard.is-viewing .pnote {
+  visibility: hidden;
+}
+
+.pnote {
   display: flex;
   flex-direction: column;
+  gap: 8px;
   width: 100%;
-  padding: 20px;
+  min-height: 150px;
+  padding: 30px 22px 22px;
   color: inherit;
-  background: none;
-  border: 0;
-  cursor: pointer;
   font: inherit;
   text-align: left;
-  transition: opacity 0.3s ease;
-}
-
-.pcover:focus-visible {
-  border-radius: 22px;
-  outline: 2px solid #3a53ed;
-  outline-offset: -4px;
-}
-
-.phang.is-open .pcover {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.pcover-head,
-.pcover-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--soft);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.pcover-name {
-  margin-top: 28px;
-  font-size: clamp(26px, 2.5vw, 36px);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-}
-
-.pcover-titles {
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: 6px;
-  min-height: 0;
-  margin-top: 18px;
-  color: var(--soft);
-  font-size: 14px;
-  line-height: 1.3;
-}
-
-.pcover-foot {
-  padding-top: 12px;
-  border-top: 1px solid #e2e2e5;
-}
-
-.pcover-arrow {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  color: #fff;
-  background: #1c1c20;
-  border-radius: 50%;
-  font-size: 13px;
-  letter-spacing: 0;
-}
-
-/* The open card. It's laid out at its final width from the start, so the text doesn't
-   reflow as the card widens; the card simply uncovers it. */
-.pdetail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--open-width);
-  padding: 24px 32px 32px;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.2s ease,
-    visibility 0s linear 0.2s;
-}
-
-.phang.is-open .pdetail {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity 0.4s ease 0.25s,
-    visibility 0s;
-}
-
-.pback-button {
-  position: sticky;
-  top: 16px;
-  z-index: 1;
-  padding: 8px 14px;
-  color: #fff;
-  background: #1c1c20;
-  border: 0;
-  border-radius: 999px;
   cursor: pointer;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    calc(3px + 5px * var(--lift)) calc(10px + 12px * var(--lift)) calc(22px + 14px * var(--lift)) -12px rgba(0, 0, 0, calc(0.28 + 0.06 * var(--lift)));
+  transition: transform 0.25s var(--ease-out);
 }
 
-.pback-button:focus-visible {
-  outline: 2px solid #3a53ed;
+.pcard.is-held .pnote {
+  cursor: grabbing;
+}
+
+.pnote:focus-visible {
+  outline: 2px solid #7950ef;
   outline-offset: 3px;
 }
 
-.pdetail-head {
-  margin: 24px 0 28px;
-}
-
-.pdetail-count {
-  color: var(--soft);
-  font-size: 11px;
+.pnote-title {
+  font-size: 26px;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.pdetail-name {
-  margin: 8px 0 0;
-  font-size: clamp(34px, 3.8vw, 56px);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+.pnote-line {
+  color: #5b5864;
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
-.pdetail-list {
+/* The push pin. Lifting raises it off the card: the needle shows and its shadow drifts away. */
+.ppin {
+  position: absolute;
+  top: -18px; /* the needle meets the card 12px down */
+  left: 50%;
+  z-index: 1;
+  width: 32px;
+  height: 44px;
+  margin-left: -16px;
+  pointer-events: none;
+  transition: transform 0.72s cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.pcard.is-pulled .ppin {
+  transform: translateY(-68px);
+}
+
+.ppin-art {
+  position: relative;
+  display: block;
+  overflow: visible;
+  transform: translateY(calc(-7px * var(--lift)));
+}
+
+.ppin-needle {
+  opacity: var(--lift);
+}
+
+.ppin-shadow {
+  position: absolute;
+  top: 26px;
+  left: 9px;
+  width: 18px;
+  height: 9px;
+  background: rgba(0, 0, 0, 0.32);
+  border-radius: 50%;
+  filter: blur(calc(1.5px + 2.5px * var(--lift)));
+  opacity: calc(0.9 - 0.45 * var(--lift));
+  transform: translate(calc(4px + 7px * var(--lift)), calc(1px + 6px * var(--lift)));
+}
+
+.pcard.is-pulled .ppin-shadow {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* The opened card. */
+.pview {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: none;
+  border: 0;
+}
+
+.pview[open] {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  place-items: center;
+}
+
+.pview::backdrop {
+  background: none;
+}
+
+.pview-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  cursor: zoom-out;
+}
+
+.pview-panel {
+  position: relative;
+  width: min(88vw, 720px);
+  max-height: 84vh;
+  padding: 40px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: #080808;
+  font-weight: 400;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.35);
+  will-change: transform;
+}
+
+.pview-title {
+  margin: 16px 0 10px;
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.pview-summary {
+  color: #5b5864;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.pview-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 32px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #eceaf0;
 }
 
-.pproject {
-  display: flex;
-  flex-direction: column;
-  padding-top: 16px;
-  border-top: 1px solid #dcdce0;
-}
-
-.pproject-title {
-  margin: 0 0 6px;
-  font-size: 22px;
+.pview-label {
+  margin: 0 0 10px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
 }
 
-.pproject-summary {
-  margin-bottom: 12px;
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.45;
-}
-
-.pproject-block {
-  margin-bottom: 12px;
-}
-
-.pproject-label {
-  margin-bottom: 4px;
-  color: var(--soft);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.pproject-points {
+.pview-points {
   margin: 0;
   padding-left: 18px;
-  color: #3f3f46;
-  font-size: 14px;
-  line-height: 1.45;
+  color: #5b5864;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
-.pproject-points li + li {
-  margin-top: 3px;
+.pview-points li + li {
+  margin-top: 6px;
 }
 
-.pproject-foot {
+.pview-foot {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
-  margin-top: auto;
-  padding-top: 8px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #eceaf0;
 }
 
-.pproject-tags {
-  color: var(--soft);
-  font-size: 12px;
-  line-height: 1.4;
+.pview-tags {
+  color: #77747f;
+  font-size: 14px;
 }
 
-.pproject-link {
-  flex: none;
-  padding: 7px 12px;
-  color: var(--ink);
-  background: #fff;
-  border: 1px solid #d9d9dd;
+.pview-link {
+  display: inline-flex;
+  padding: 8px 14px 9px;
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  background: #080808;
   border-radius: 999px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
+  transition: transform 0.16s var(--ease-out);
 }
 
-.pproject-link:hover {
-  background: #ececee;
+.pview-link:active {
+  transform: scale(0.97);
+}
+
+.pview-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #fff;
+  cursor: pointer;
+  background: #080808;
+  border: 0;
+  border-radius: 999px;
+  transition: transform 0.16s var(--ease-out);
+}
+
+.pview-close:active {
+  transform: scale(0.94);
+}
+
+.pview-close:focus-visible {
+  outline: 2px solid #7950ef;
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .prail,
-  .phang,
+  .ppill,
+  .pnote,
+  .ppin {
+    transition: opacity 0.18s;
+  }
+
+  .pcategory:hover .ppill,
+  .pcategory:active .ppill {
+    transform: none !important;
+  }
+}
+
+/* Narrower screens: the board starts below the heading instead of beside it. */
+@media (width <= 1400px) {
+  .pboard {
+    margin-top: 20px;
+  }
+}
+
+@media (width <= 1100px) {
   .pcard {
-    transition: none;
+    width: 200px;
+  }
+
+  .pnote-title {
+    font-size: 22px;
+  }
+}
+
+/* Phones: two neat columns instead of a scattered board. */
+@media (width <= 700px) {
+  .projects {
+    padding: 32px 24px 56px;
+  }
+
+  .projects-title {
+    margin-bottom: 12px;
+    font-size: 32px;
+  }
+
+  .pboard {
+    height: auto;
+    margin-top: 36px;
+    columns: 2;
+    column-gap: 14px;
+  }
+
+  .pcard,
+  .pcard[style] {
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    display: block;
+    width: 100%;
+    margin: 0 0 14px;
+    break-inside: avoid;
+    transform: none !important;
+  }
+
+  .pcard.is-hidden {
+    display: none;
+  }
+
+  .pcard.aside {
+    filter: none;
+  }
+
+  .pnote {
+    min-height: 0;
+    padding: 26px 14px 16px;
+  }
+
+  .pnote-title {
+    font-size: 20px;
+  }
+
+  .pnote-line {
+    font-size: 14px;
+  }
+
+  .pview-panel {
+    width: 100%;
+    max-height: calc(100dvh - 80px);
+    align-self: end;
+    padding: 28px 24px max(32px, env(safe-area-inset-bottom));
+    border-radius: 16px 16px 0 0;
+  }
+
+  .pview-title {
+    font-size: 36px;
+  }
+
+  .pview-columns {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
